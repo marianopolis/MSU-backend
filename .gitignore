@@ -1,0 +1,9 @@
+# ignore virtualenv build folder
+/msu_app
+
+# ignore .env file with secret key, app config and database url
+.env
+
+# ignore compilation files when running
+*.pyc
+__pycache__/
