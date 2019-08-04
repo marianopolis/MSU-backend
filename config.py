@@ -1,27 +1,38 @@
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    DEBUG = False
+    DEBUG = True
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.environ['APP_SECRET_KEY']
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    APP_SECRET_KEY = 'msu'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/msu'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+class DevConfig(Config):
+    db_user = 'postgres'
+    db_pass = 'postgres'
+    db_host = 'localhost'
+    db_name = 'msu_dev'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(
+                                db_user, db_pass, db_host, db_name)
 
-class ProductionConfig(Config):
+class TestConfig(Config):
+    TESTING = False
+
+    db_user = 'postgres'
+    db_pass = 'postgres'
+    db_host = 'localhost'
+    db_name = 'msu_test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(
+                                db_user, db_pass, db_host, db_name)
+
+class ProdConfig(Config):
     DEBUG = False
+    APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
-
-class StagingConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
-
-
-class DevelopmentConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
-
-
-class TestingConfig(Config):
-    TESTING = True
+configs = {
+    'development': DevConfig,
+    'testing': TestConfig,
+    'production': ProdConfig,
+}
