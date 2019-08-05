@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MSU</title>
+    <link rel="shortcut icon" href="{{url_for('static', filename='appIcon.png')}}">
+
+    <!-- Material Design for Bootstrap fonts and icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+
+    <!-- Material Design for Bootstrap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+  </head>
+
+  <style type="text/css">
+      .body-format {
+          background-color: #f2f2f2; 
+          font-family: 'Trebuchet MS', Helvetica, sans-serif;
+      }
+
+      .card-format {
+          margin: 2% auto;
+          height: 80vh;
+      }
+  </style>
+
+  <body class="body-format">
+  	{% include "navbar.html" %}
+
+    <div class="container-fluid to-show">
+      <div class="row container-fluid">
+      	<div class="card col-11 card-format">
+          <div class="card-header">Public Forms</div>
+          <div class="card-body">
+
+            <div class="col-sm-6">
+              
+            		{% if myForms %}
+            			{% for row in myForms%}
+
+                  <form method="post">
+                    
+                    <div class="row">
+                      <div class="form-group col">
+                        <label class="label">Time</label>
+                        <input class="form-control" type="text" value="{{row.time}}" readonly>
+                      </div>
+
+                      <div class="form-group col">
+                        <label class="label">Name</label>
+                        <input class="form-control" type="text" value="{{row.name}}" readonly>
+                      </div>
+
+                      <div class="form-group col">
+                        <label class="label">Subject</label>
+                        <input class="form-control" type="text" value="{{row.subject}}" readonly>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="label">Message</label>
+                      <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.text}}" readonly></textarea>
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" value="Delete" name="submit">
+                    <input type="hidden" value="{{row.form_id}}" name="id">
+
+                  </form>
+
+                  {% endfor %}
+            		{% endif %}
+
+            </div>
+
+            <div class="col-sm-6">
+              <form method="post">
+
+                {% if myPrivateForms %}
+                  {% for row in myPrivateForms%}
+
+                  <div class="row">
+                    <div class="form-group col">
+                      <label class="label">Time</label>
+                      <input class="form-control" type="text" value="{{row.time}}" readonly>
+                    </div>
+
+                    <div class="form-group col">
+                      <label class="label">Subject</label>
+                      <input class="form-control" type="text" value="{{row.subject}}" readonly>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="label">Message</label>
+                    <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.text}}" readonly></textarea>
+                  </div>
+
+                  <input type="submit" class="btn btn-primary" value="Delete" name="submit">
+                  <input type="hidden" value="{{row.form_id}}" name="id">
+
+                  {% endfor %}
+                {% endif %}
+              </form>
+            </div>
+          </div>
+      	</div>
+      </div>
+    </div>
+
+  	<!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+      <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+</html>

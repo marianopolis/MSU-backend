@@ -1,5 +1,5 @@
 # ignore virtualenv build folder
-/msu_app
+/venv
 
 # ignore .env file with secret key, app config and database url
 .env

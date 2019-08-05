@@ -21,13 +21,13 @@ def create_post(title, text, author):
 
 def get_documents():
     """retrieve all documents from database with corresponding description and download link"""
-    documents = Documents.query.order_by(desc(Documents.uploadtime)).all()
+    documents = Files.query.order_by(desc(Files.uploadtime)).all()
     return documents
 
 def upload_document(file, filename, description, author, uploadtime):
     # store document data in file hosting server and get file access url (file_url)
 
-    new_document = Documents(filename=filename, file_url=file_url, description=description, author=author, uploadtime=datetime.datetime.now())
+    new_document = Files(filename=filename, file_url=file_url, description=description, author=author, uploadtime=datetime.datetime.now())
     db.session.add(new_document)
     db.session.commit()
 

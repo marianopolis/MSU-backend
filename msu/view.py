@@ -13,28 +13,32 @@ from .models import Admins
 bp = Blueprint('view', __name__)
 
 @bp.route('/', methods=['GET', 'POST'])
-@bp.route('/login')
-def index():
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
     """login page: check for credentials"""
     # check if session is logged, if True redirect to main page
     if session.get('logged', None):
-        return(redirect(url_for("newspage", username=session.get('username'))))
+        return(redirect(url_for("view.newspage", username=session.get('username'))))
 
     if request.method == 'POST':
         username = request.form.get('username', None)
         password = request.form.get('password', None)
         user = Admins.get_by_username(username)
 
-        if user:
-            true_password = user.password
-            if password == true_password:
-                session['logged'] = true_password
-                session['username'] = username
-                return redirect(url_for('addnews', username=username))
-            else:
-                abort(401)
-        else:
-            return redirect(url_for('login'))
+        session['logged'] = True
+        session['username'] = username
+        return redirect(url_for('view.newspage', username=username))
+
+        # if user:
+        #     true_password = user.password
+        #     if password == true_password:
+        #         session['logged'] = True
+        #         session['username'] = username
+        #         return redirect(url_for('view.newspage', username=username))
+        #     else:
+        #         abort(401)
+        #else:
+        #    return redirect(url_for('view.login'))
 
     return render_template('login.html')
 
@@ -76,4 +80,4 @@ def logout():
     """logout page: end session"""
     session['logged'] = False
     session.pop('username', None)
-    return redirect(url_for("login"))
+    return redirect(url_for("view.login"))
