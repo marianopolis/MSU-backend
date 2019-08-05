@@ -4,7 +4,7 @@ class Config(object):
     DEBUG = True
     TESTING = False
     CSRF_ENABLED = True
-    APP_SECRET_KEY = 'msu'
+    SECRET_KEY = 'msu'
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/msu'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -28,7 +28,7 @@ class TestConfig(Config):
 
 class ProdConfig(Config):
     DEBUG = False
-    APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 configs = {
