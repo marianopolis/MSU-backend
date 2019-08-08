@@ -13,19 +13,112 @@
 </head>
 
 <style type="text/css">
-    .body-format {
+  .body-format {
         background-color: #f2f2f2; 
         font-family: 'Trebuchet MS', Helvetica, sans-serif;
     }
 
     .card-format {
-        margin-top: 2%;
-        margin-left: 3%;
+        height: 90vh;
+        overflow: auto;
+    }
+
+    .row {
+      margin: 0 auto;
     }
 </style>
 
 <body class="body-format">
-	{% include "navbar.html" %}
+  {% include "navbar.html" %}
+
+  <div class="container-fluid to-show">
+
+    <div class="row container-fluid">
+
+      <div class="card col-4 card-format">
+        <div class="card-header"><h2>Upload a document</h2></div>
+          <div class="card-body col-sm-12">
+          <form method="post">
+            <input type="hidden" value="add" id="form_type" name="form_type">
+
+            <div class="form-group">
+              <label for="file" class="label">File (Allowed file types: txt, pdf, png, jpg, jpeg, gif)</label>
+              <input type="file" name="file" id="file" required>
+            </div>
+
+            <div class="form-group">
+              <label for="filename" class="label">Filename (Do not include file extension)</label>
+              <input type="text" class="form-control" name="filename" id="filename" required>
+            </div>
+
+            <div class="form-group">
+              <label for="author" class="label">Author</label>
+              <input type="text" class="form-control" value="{{username}}" name="author" id="author" required>
+            </div>
+
+            <div class="form-group">
+              <label for="description" class="label">Description</label>
+              <textarea id="description" name="description" class="form-control" rows="4" cols="50" style="resize:none;white-space: pre-wrap" required></textarea>
+            </div>
+
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" name="notif" id="notif">
+              <label for="notif" class="form-check-label">Notification</label>
+            </div>
+
+            <input type="submit" class="btn btn-raised btn-primary" value="Submit">
+          </form>
+        </div>
+      </div>
+
+      <div class="card col-8 card-format">
+        <div class="card-header"><h2>Uploaded documents</h2></div>
+          <div class="card-body col-sm-12">
+          {% block content %}
+            {% if myFiles %}
+              {% for row in myFiles%}
+
+                <form method="post">
+                  
+                  <div class="form-group">
+                    <label for="time" class="label">Time</label>
+                    <input type="text" class="form-control" value="{{row.uploadtime}}" name="time" id="time" readonly>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="title" class="label">Filename</label>
+                    <input type="text" class="form-control" value="{{row.filename}}" name="filename" id="filename" readonly>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="file" class="label">Download File</label>
+                    <a href="{{row.file_url}}" download="{{row.filename}}">Download</a>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="author" class="label">Author</label>
+                    <input type="text" class="form-control" value="{{row.author}}" name="author" id="author" readonly>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="description" class="label">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="5" cols="50" style="resize:none;white-space: pre-wrap" readonly>{{row.description}}</textarea>
+                  </div>
+                  
+                    <input type="submit" class="btn btn-primary" value="Delete" name="submit">
+                    <input type="hidden" value="{{row.id}}" name="id">
+                    <input type="hidden" value="delete" id="form_type" name="form_type">
+                </form>
+
+              {% endfor %}
+            {% else %}
+              <div>No documents were found in the database.</div>
+            {% endif %}
+          {% endblock content %}
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>

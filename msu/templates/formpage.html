@@ -20,8 +20,12 @@
       }
 
       .card-format {
-          margin: 2% auto;
-          height: 80vh;
+          height: 90vh;
+          overflow: auto;
+      }
+
+      .row {
+        margin: 0 auto;
       }
   </style>
 
@@ -30,12 +34,13 @@
 
     <div class="container-fluid to-show">
       <div class="row container-fluid">
-      	<div class="card col-11 card-format">
-          <div class="card-header">Public Forms</div>
+
+      	<div class="card col-6 card-format">
+          <div class="card-header"><h2>Public Forms</h2></div>
           <div class="card-body">
 
-            <div class="col-sm-6">
-              
+            <div class="col-sm-12">
+              {% block public %}
             		{% if myForms %}
             			{% for row in myForms%}
 
@@ -44,7 +49,7 @@
                     <div class="row">
                       <div class="form-group col">
                         <label class="label">Time</label>
-                        <input class="form-control" type="text" value="{{row.time}}" readonly>
+                        <input class="form-control" type="text" value="{{row.uploadtime}}" readonly>
                       </div>
 
                       <div class="form-group col">
@@ -60,51 +65,64 @@
 
                     <div class="form-group">
                       <label class="label">Message</label>
-                      <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.text}}" readonly></textarea>
+                      <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.message}}" readonly></textarea>
                     </div>
 
                     <input type="submit" class="btn btn-primary" value="Delete" name="submit">
-                    <input type="hidden" value="{{row.form_id}}" name="id">
+                    <input type="hidden" value="{{row.id}}" name="id">
 
                   </form>
 
                   {% endfor %}
+                {% else %}
+                  <div>No public forms were found in the database.</div>
             		{% endif %}
+              {% endblock public %}
 
             </div>
 
-            <div class="col-sm-6">
+          </div>
+      	</div>
+
+        <div class="card col-6 card-format">
+          <div class="card-header"><h2>Private Forms</h2></div>
+          <div class="card-body">
+            <div class="col-sm-12">
               <form method="post">
+                {% block private %}
+                  {% if myPrivateForms %}
+                    {% for row in myPrivateForms %}
 
-                {% if myPrivateForms %}
-                  {% for row in myPrivateForms%}
+                    <div class="row">
+                      <div class="form-group col">
+                        <label class="label">Time</label>
+                        <input class="form-control" type="text" value="{{row.uploadtime}}" readonly>
+                      </div>
 
-                  <div class="row">
-                    <div class="form-group col">
-                      <label class="label">Time</label>
-                      <input class="form-control" type="text" value="{{row.time}}" readonly>
+                      <div class="form-group col">
+                        <label class="label">Subject</label>
+                        <input class="form-control" type="text" value="{{row.subject}}" readonly>
+                      </div>
                     </div>
 
-                    <div class="form-group col">
-                      <label class="label">Subject</label>
-                      <input class="form-control" type="text" value="{{row.subject}}" readonly>
+                    <div class="form-group">
+                      <label class="label">Message</label>
+                      <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.message}}" readonly></textarea>
                     </div>
-                  </div>
 
-                  <div class="form-group">
-                    <label class="label">Message</label>
-                    <textarea class="form-control" type="text" rows="5" cols="50" style="resize: none; white-space: pre-wrap;" value="{{row.text}}" readonly></textarea>
-                  </div>
+                    <input type="submit" class="btn btn-primary" value="Delete" name="submit">
+                    <input type="hidden" value="{{row.id}}" name="id">
 
-                  <input type="submit" class="btn btn-primary" value="Delete" name="submit">
-                  <input type="hidden" value="{{row.form_id}}" name="id">
-
-                  {% endfor %}
-                {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <div>No private forms were found in the database.</div>
+                  {% endif %}
+                {% endblock private %}
               </form>
             </div>
           </div>
-      	</div>
+        </div>
+
       </div>
     </div>
 
