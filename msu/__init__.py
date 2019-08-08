@@ -13,7 +13,7 @@ def create_app(test_config=None):
     app.config.from_object(configs[app.env])
 
     db.init_app(app)
-    migrate.init_app(app)
+    migrate.init_app(app, db)
 
     from . import api
     from . import view

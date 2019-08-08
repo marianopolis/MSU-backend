@@ -1,6 +1,6 @@
 from flask import Blueprint, session, abort, request
 
-from .models import Posts, Files, Forms
+from .models import Post, File, Form
 
 bp = Blueprint('api', __name__)
 
@@ -10,7 +10,7 @@ def api_post():
     GET => return all unarchived posts
     """
     if session.get('logged', None):
-        return Posts.get_all()
+        return Post.query.all()
     else:
         abort(403)
 
@@ -20,7 +20,7 @@ def api_files():
     GET => return all file descriptions and urls
     """
     if session.get('logged', None):
-        return Files.get_all()
+        return File.query.all()
     else:
         abort(403)
 
@@ -33,10 +33,11 @@ def api_forms():
         abort(403)
 
     if request.method == 'POST':
-        Forms(
+        db.session.add(Form(
             name=request.form['name'],
             subject=request.form['subject'],
             message=request.form['message'],
-        ).insert()
+        ))
+        db.commit()
 
         return "", 201

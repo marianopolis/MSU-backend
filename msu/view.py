@@ -10,7 +10,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from .models import Admins
+from .models import Admin
 from .functions import *
 
 bp = Blueprint('view', __name__)
@@ -26,7 +26,7 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username', None)
         password = request.form.get('password', None)
-        user = Admins.get_by_username(username)
+        user = Admin.query.filter_by(username=username).first()
 
         session['logged'] = True
         session['username'] = username
