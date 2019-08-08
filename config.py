@@ -17,7 +17,7 @@ class DevConfig(Config):
                                 db_user, db_pass, db_host, db_name)
 
 class TestConfig(Config):
-    TESTING = False
+    TESTING = True
 
     db_user = 'postgres'
     db_pass = 'postgres'

@@ -7,16 +7,18 @@ from config import configs
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(test_config=None):
+def create_app(testing: bool):
     app = Flask(__name__)
 
-    app.config.from_object(configs[app.env])
+    if testing:
+        app.config.from_object(configs['testing'])
+    else:
+        app.config.from_object(configs[app.env])
 
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from . import api
-    from . import view
+    from . import api, view
     app.register_blueprint(api.bp)
     app.register_blueprint(view.bp)
 

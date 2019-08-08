@@ -7,7 +7,6 @@ from sqlalchemy.sql import func
 from msu import db
 
 def hash_pwd(pwd, salt):
-    print('{} {}'.format(pwd, salt))
     return hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
 
 class Admin(db.Model):
