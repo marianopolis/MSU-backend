@@ -7,6 +7,8 @@ class Config(object):
     SECRET_KEY = 'msu'
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/msu'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SIMPLEMDE_JS_IIFE = True
+    SIMPLEMDE_USE_CDN = True
 
 class DevConfig(Config):
     db_user = 'postgres'

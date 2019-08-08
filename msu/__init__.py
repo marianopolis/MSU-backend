@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_simplemde import SimpleMDE
 
 from config import configs
 
 db = SQLAlchemy()
 migrate = Migrate()
+simplemde = SimpleMDE()
 
 def create_app(testing: bool):
     app = Flask(__name__)
@@ -17,6 +19,8 @@ def create_app(testing: bool):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    simplemde.init_app(app)
+
 
     from . import api, view
     app.register_blueprint(api.bp)

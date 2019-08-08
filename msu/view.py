@@ -54,6 +54,7 @@ def newspage(username):
     GET  => retrieve and display all archived and unarchived posts
     POST => add new post to database and send push notification
     """
+
     if request.method == 'POST':
         formType = request.form['form_type']
 
@@ -61,7 +62,7 @@ def newspage(username):
             postTitle = request.form['title']
             postAuthor = request.form['author']
             postContent = request.form['text']
-            sendNotif = request.form['notif']
+            sendNotif = request.form.get('notif')
 
             #create_post(postTitle, postContent, postAuthor)
 
@@ -73,7 +74,6 @@ def newspage(username):
             #delete_post(postID)
 
     #all_posts = get_posts() # unarchived posts
-
 
     if session.get('logged', None):
         return render_template('newspage.html', username=username)
@@ -104,7 +104,7 @@ def documentpage(username):
                 fileName = secure_filename(fileName)
                 fileDescription = request.form['description']
                 fileAuthor = request.form['author']
-                sendNotif = request.form['notif']
+                sendNotif = request.form.get('notif')
 
                 upload_document(file, fileName, fileDescription, fileAuthor)
                 flash('File successfully uploaded')
