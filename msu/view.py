@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    g,
     session,
     redirect,
     url_for,
@@ -15,41 +16,45 @@ from .functions import *
 
 bp = Blueprint('view', __name__)
 
+# TODO: login_required
+
+@bp.before_app_request
+def load_logged_in_admin():
+    g.username = session.get('username')
+
+
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """login page: check for credentials"""
-    # check if session is logged, if True redirect to main page
+    # If already logged in, redirect to main page
     if session.get('logged', None):
         return(redirect(url_for("view.newspage", username=session.get('username'))))
 
     if request.method == 'POST':
-        username = request.form.get('username', None)
-        password = request.form.get('password', None)
+        username = request.form.get('username')
+        password = request.form.get('password')
+        err = None
+        user = Admin.query.filter_by(username=username).first()
 
-        user = Admin.query.filter_by(username=username).first_or_404()
-        # TODO auth
+        if user is None:
+            err = "Username does not exist."
+        elif not user.password_equals(password):
+            err = "Invalid password."
 
-        session['logged'] = True
-        session['username'] = username
-        session['admin_id'] = user.id
-        return redirect(url_for('view.newspage', username=username))
+        if err is None:
+            session.clear()
+            session['logged'] = True
+            session['username'] = username
+            session['admin_id'] = user.id
 
-        # if user:
-        #     true_password = user.password
-        #     if password == true_password:
-        #         session['logged'] = True
-        #         session['username'] = username
-        #         return redirect(url_for('view.newspage', username=username))
-        #     else:
-        #         abort(401)
-        #else:
-        #    return redirect(url_for('view.login'))
+            return redirect(url_for('view.newspage', username=username))
+
+        flash(err)
 
     return render_template('login.html')
 
-@bp.route('/newspage/<username>', methods=['GET', 'POST'])
-def newspage(username):
+@bp.route('/newspage', methods=['GET', 'POST'])
+def newspage():
     """
     GET  => retrieve and display all archived and unarchived posts
     POST => add new post to database and send push notification
@@ -76,12 +81,12 @@ def newspage(username):
     #all_posts = get_posts() # unarchived posts
 
     if session.get('logged', None):
-        return render_template('newspage.html', username=username)
+        return render_template('newspage.html')
     else:
         abort(403)
 
-@bp.route('/documentpage/<username>', methods=['GET', 'POST'])
-def documentpage(username):
+@bp.route('/documentpage', methods=['GET', 'POST'])
+def documentpage():
     """
     GET  => retrieve and display all available documents from file hosting
     POST => add new document and info to file hosting and postgresql db
@@ -123,13 +128,13 @@ def documentpage(username):
     #all_documents = get_documents()
 
     if session.get('logged', None):
-        return render_template('documentpage.html', username=username)
+        return render_template('documentpage.html')
     else:
         abort(403)
 
 
-@bp.route('/formpage/<username>', methods=['GET'])
-def formpage(username):
+@bp.route('/formpage', methods=['GET'])
+def formpage():
     """
     GET => retrieve and display all available forms from postgresql db
     POST => delete form
@@ -149,7 +154,7 @@ def formpage(username):
 
 
     if session.get('logged', None):
-        return render_template('formpage.html', username=username)
+        return render_template('formpage.html')
     else:
         abort(403)
 
