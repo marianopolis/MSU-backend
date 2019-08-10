@@ -1,75 +1,23 @@
-<!DOCTYPE html>
-<html>
+{% extends 'layout/base.html' %}
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MSU</title>
-  <link rel="shortcut icon" href="{{url_for('static', filename='appIcon.png')}}">
+{% block title %}Login{% endblock %}
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-  <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-
-</head>
-
-<style>
-
-    .body-format {
-        background-color: #f2f2f2; 
-        font-family: 'Trebuchet MS', Helvetica, sans-serif;
-    }
-
-    .form-container {
-        margin: 0 auto;
-        margin-top: 2%;
-    }
-
-    div {
-        margin: auto;
-        padding: 15px;
-    }
-
-    #cover-img {
-        width: 50%;
-        height: auto;
-        margin: 0 auto;
-        padding-top: 40px;
-    }
-
-</style>
-
-
-
-<body class="body-format">
-    <form class="form-container" method='POST'>
-        <div class="card col-sm-4">
-            <img id="cover-img" src="{{url_for('static', filename='appIcon.png')}}">
-
-            <div class="card-body col-sm-12">
-              <div class="form-group">
-                <label class="label" for="uname">Username</label>
-                <input class="form-control" type="text" placeholder="Enter Username" name="username" required>
-              </div>
-              <div class="form-group"> 
-                <label class="label" for="psw">Password</label>
-                <input class="form-control" type="password" placeholder="Enter Password" name="password" required>
-              </div>
-              <div><button class="btn btn-raised bg-primary" type="submit" value="Login">Login</button></div>
-            </div>
-        </div>
-
-        {% if error %}
-        <div class="alert alert-danger col-sm-4" role="alert">
-          {{error}}
-        </div> 
-        {% endif %}
-
+{% block content %}
+  <div class="form-container card col-sm-4">
+    <form method='POST'>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="Username" name="username" required />
+      </div>
+      <div class="form-group"> 
+        <input class="form-control" type="password" placeholder="Password" name="password" required />
+      </div>
+      <div class="form-group"> 
+        <button class="btn btn-raised bg-primary" type="submit" value="Login">Login</button>
+      </div>
     </form>
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
-</body>
-</html>
+    {% for msg in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">{{msg}}</div> 
+    {% endfor %}
+  </div>
+{% endblock %}

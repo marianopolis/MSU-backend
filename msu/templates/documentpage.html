@@ -1,42 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MSU</title>
-  <link rel="shortcut icon" href="{{url_for('static', filename='appIcon.png')}}">
+{% extends 'layout/base_admin.html' %}
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-  <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-  {{ simplemde.css }}
-  {{ simplemde.js }}
+{% block title %}
+Files
+{% endblock %}
 
-</head>
-
-<style type="text/css">
-  .body-format {
-        background-color: #f2f2f2; 
-        font-family: 'Trebuchet MS', Helvetica, sans-serif;
-    }
-
-    .card-format {
-        height: 90vh;
-        overflow: auto;
-    }
-
-    .row {
-      margin: 0 auto;
-    }
-</style>
-
-<body class="body-format">
-  {% include "navbar.html" %}
-
+{% block admin_content %}
   <div class="container-fluid to-show">
-
     <div class="row container-fluid">
-
       <div class="card col-5 card-format">
         <div class="card-header"><h2>Upload a document</h2></div>
           <div class="card-body col-sm-12">
@@ -76,7 +46,6 @@
       <div class="card col-7 card-format">
         <div class="card-header"><h2>Uploaded documents</h2></div>
           <div class="card-body col-sm-12">
-          {% block content %}
             {% if myFiles %}
               {% for row in myFiles%}
 
@@ -116,27 +85,8 @@
             {% else %}
               <div>No documents were found in the database.</div>
             {% endif %}
-          {% endblock content %}
         </div>
       </div>
     </div>
   </div>
-
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
-
-    <script type="text/javascript">
-      var simplemde = new SimpleMDE({});
-
-      {% for row in myFiles %}
-
-        var markdownText = `{{row.text}}`;
-        $('#{{row.id}}').wrapInner(simplemde.options.previewRender(markdownText));
-
-      {% endfor %}
-    </script>
-</body>
-</html>
+{% endblock %}

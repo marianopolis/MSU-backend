@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <title>{% block title %}{% endblock %} - MSU</title>
+    <link rel="shortcut icon" href="{{url_for('static', filename='appIcon.png')}}">
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons"
+      />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+      integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX"
+      crossorigin="anonymous"
+      />
+
+    <!-- SimpleMDE -->
+    {{ simplemde.css }}
+    {{ simplemde.js }}
+  </head>
+
+  <style>
+    .body-format {
+      background-color: #f2f2f2; 
+      font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    }
+    .card-format {
+      height: 90vh;
+      overflow: auto;
+    }
+    .row {
+      margin: 0 auto;
+    }
+    .form-container {
+      margin: auto;
+      margin-top: 2%;
+    }
+    .form-group {
+      margin: auto;
+      padding: 15px;
+    }
+  </style>
+
+  <body class="body-format">
+    <header>{% block header %}{% endblock %}</header>
+
+    {% block content %}{% endblock %}
+  </body>
+</html>
