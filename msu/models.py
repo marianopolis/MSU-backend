@@ -64,7 +64,9 @@ class Form(db.Model):
 
     @validates('name')
     def validate_name(self, key, name):
-        assert len(name) <= 80
+        if name is not None:
+            assert len(name) <= 80
+
         return name
 
     @validates('subject')

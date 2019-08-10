@@ -17,6 +17,21 @@ def json_post(post):
         'inserted_at': post.inserted_at,
     }
 
+def json_form(form):
+    r = {
+        'id': form.id,
+        'subject': form.subject,
+        'body': form.body,
+        'private': form.private,
+        'inserted_at': form.inserted_at,
+    }
+
+    if form.name is not None:
+        r['name'] = form.name
+
+    return r
+
+
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
     posts = Post.query.all()
@@ -53,20 +68,30 @@ def delete_post(id):
     db.session.commit()
     return '', 204
 
-@bp.route('/api/forms', methods=['GET', 'POST'])
-def api_forms():
-    """
-    POST => add new form submitted by user to database
-    """
-    if not session.get('logged', None):
-        abort(403)
 
-    if request.method == 'POST':
-        db.session.add(Form(
-            name=request.form['name'],
-            subject=request.form['subject'],
-            message=request.form['message'],
-        ))
-        db.commit()
+@bp.route('/api/forms', methods=['GET'])
+def get_forms():
+    check_authorized()
 
-        return "", 201
+    forms = None
+    private = request.args.get('private')
+    if private is None:
+        forms = Form.query.all()
+    elif private == 'true':
+        forms = Form.query.filter_by(private=True).all()
+    elif private == 'false':
+        forms = Form.query.filter_by(private=False).all()
+    else:
+        abort(400)
+
+    return {'data': [json_form(f) for f in forms]}
+
+@bp.route('/api/forms', methods=['POST'])
+def create_form():
+    db.session.add(Form(
+        name=request.form.get('name'),
+        private=request.form.get('private'),
+        subject=request.form['subject'],
+        body=request.form['body'],
+    ))
+    return '', 201

@@ -2,7 +2,7 @@ from json import JSONDecoder
 import pytest
 
 from msu import create_app, db, api
-from msu.models import Admin, File, Post
+from msu.models import Admin, File, Post, Form
 
 app = create_app(testing=True)
 
@@ -100,3 +100,42 @@ def test_posts_delete(client):
     rv = client.delete(f'/api/posts/{p.id}')
     assert rv.status_code == 204
     assert Post.query.get(p.id) is None
+
+
+def test_forms_get(client):
+    f1 = insert_item(Form(subject='Hello', body='I love you'))
+    f2 = insert_item(Form(subject='Hi!', body='Thank you', private=True))
+    f3 = insert_item(Form(subject='Hey', body="You're amazing", name='Bob'))
+
+    rv = client.get('/api/forms')
+    assert rv.status_code == 403
+
+    login(client)
+    rv = client.get('/api/forms')
+    data = decode(rv.data)['data']
+    assert rv.status_code == 200
+    assert len(data) == 3
+
+    rv = client.get('/api/forms?private=false')
+    data = decode(rv.data)['data']
+    assert rv.status_code == 200
+    assert len(data) == 2
+
+    rv = client.get('/api/forms?private=true')
+    data = decode(rv.data)['data']
+    assert rv.status_code == 200
+    assert len(data) == 1
+
+def test_forms_post(client):
+    rv = client.post('/api/forms', data={
+        'subject': 'Hello World!',
+        'body': 'Your app is terrible',
+    })
+
+    assert rv.status_code == 201
+
+    f = Form.query.first()
+    assert f.subject == 'Hello World!'
+    assert f.body == 'Your app is terrible'
+    assert f.private == False
+    assert f.name is None
