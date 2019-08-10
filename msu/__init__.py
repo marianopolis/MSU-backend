@@ -9,7 +9,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 simplemde = SimpleMDE()
 
-def create_app(testing: bool):
+def create_app(testing=False):
     app = Flask(__name__)
 
     if testing:
