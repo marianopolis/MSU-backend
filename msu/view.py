@@ -26,10 +26,13 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username', None)
         password = request.form.get('password', None)
-        user = Admin.query.filter_by(username=username).first()
+
+        user = Admin.query.filter_by(username=username).first_or_404()
+        # TODO auth
 
         session['logged'] = True
         session['username'] = username
+        session['admin_id'] = user.id
         return redirect(url_for('view.newspage', username=username))
 
         # if user:
