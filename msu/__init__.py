@@ -21,7 +21,6 @@ def create_app(testing=False):
     migrate.init_app(app, db)
     simplemde.init_app(app)
 
-
     from . import api, view
     app.register_blueprint(api.bp)
     app.register_blueprint(view.bp)

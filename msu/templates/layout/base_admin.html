@@ -24,14 +24,5 @@
 
   <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 
-  <script type="text/javascript">
-    var simplemde = new SimpleMDE({});
-
-    {% for row in myFiles %}
-
-    var markdownText = `{{row.text}}`;
-    $('#{{row.id}}').wrapInner(simplemde.options.previewRender(markdownText));
-
-    {% endfor %}
-  </script>
+  {{ simplemde.load_id('editor') }}
 {% endblock %}

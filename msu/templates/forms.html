@@ -1,0 +1,37 @@
+{% extends 'layout/base_admin.html' %}
+
+{% block title %}Forms{% endblock %}
+
+{% macro form_card(row) %}
+  <div class="col card card-format">
+    <div class="row">
+      <div><p>{{ row.name }}</p></div>
+      <div><p>{{ row.inserted_at }}</p></div>
+    </div>
+
+    <h4>{{ row.subject }}</h4>
+    <p>{{ row.body }}</p>
+  </div>
+{% endmacro %}
+
+{% macro card_group(rows, head) %}
+  <div class="card col-6 card-format">
+    <div class="card-header"><h2>{{ head }}</h2></div>
+    <div class="card-body">
+      <div class="col-sm-12">
+        {% for row in rows %}
+          {{ form_card(row) }}
+        {% else %}
+          <div>No forms were found in the database.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% block admin_content %}
+  <div class="container-fluid to-show row">
+    {{ card_group(public_forms,  'Public Forms')  }}
+    {{ card_group(private_forms, 'Private Forms') }}
+  </div>
+{% endblock %}

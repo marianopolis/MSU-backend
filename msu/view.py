@@ -1,3 +1,4 @@
+import functools
 from flask import (
     Blueprint,
     g,
@@ -9,26 +10,39 @@ from flask import (
     request,
     render_template,
 )
-from werkzeug.utils import secure_filename
+from werkzeug import secure_filename
 
-from .models import Admin
+from . import db
+from .models import Admin, Form, Post, File
 from .functions import *
 
 bp = Blueprint('view', __name__)
 
-# TODO: login_required
+
+def login_required(view):
+    """View decorator to redirect anonymous users."""
+
+    @functools.wraps(view)
+    def wrapped(**kw):
+        if g.admin_id is None:
+            return redirect(url_for('view.login'))
+        else:
+            return view(**kw)
+
+    return wrapped
+
 
 @bp.before_app_request
 def load_logged_in_admin():
+    g.admin_id = session.get('admin_id')
     g.username = session.get('username')
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # If already logged in, redirect to main page
-    if session.get('logged', None):
-        return(redirect(url_for("view.newspage", username=session.get('username'))))
+    if g.admin_id is not None:
+        return redirect(url_for('view.posts'))
 
     if request.method == 'POST':
         username = request.form.get('username')
@@ -43,124 +57,70 @@ def login():
 
         if err is None:
             session.clear()
-            session['logged'] = True
             session['username'] = username
             session['admin_id'] = user.id
 
-            return redirect(url_for('view.newspage', username=username))
+            return redirect(url_for('view.posts'))
 
         flash(err)
 
     return render_template('login.html')
 
-@bp.route('/newspage', methods=['GET', 'POST'])
-def newspage():
-    """
-    GET  => retrieve and display all archived and unarchived posts
-    POST => add new post to database and send push notification
-    """
 
+@bp.route('/posts', methods=['GET', 'POST'])
+@login_required
+def posts():
     if request.method == 'POST':
-        formType = request.form['form_type']
+        db.session.add(Post(
+            subject=request.form['subject'],
+            body=request.form['body'],
+            admin_id=session['admin_id'],
+        ))
+        db.session.commit()
 
-        if formType == 'add':
-            postTitle = request.form['title']
-            postAuthor = request.form['author']
-            postContent = request.form['text']
-            sendNotif = request.form.get('notif')
+    posts = Post.query.filter_by(archived=False).all()
+    return render_template('posts.html', posts=posts)
 
-            #create_post(postTitle, postContent, postAuthor)
 
-            if sendNotif == 'on':
-                pass # send push notifs to frontend
-
-        elif formType == 'delete':
-            postID = request.form['id']
-            #delete_post(postID)
-
-    #all_posts = get_posts() # unarchived posts
-
-    if session.get('logged', None):
-        return render_template('newspage.html')
-    else:
-        abort(403)
-
-@bp.route('/documentpage', methods=['GET', 'POST'])
-def documentpage():
-    """
-    GET  => retrieve and display all available documents from file hosting
-    POST => add new document and info to file hosting and postgresql db
-    """
-
+@bp.route('/files', methods=['GET', 'POST'])
+@login_required
+def files():
     if request.method == 'POST':
-        formType = request.form['form_type']
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
 
-        if formType == 'add':
-            # check if the post request has the file part
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-            file = request.files['file']
-            if file.filename == '':
-                flash('No file selected for uploading')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                fileName = (request.form['filename'].split('.')[0]) + '.' + (file.filename.split('.')[-1])
-                fileName = secure_filename(fileName)
-                fileDescription = request.form['description']
-                fileAuthor = request.form['author']
-                sendNotif = request.form.get('notif')
+        file = request.files['file']
 
-                upload_document(file, fileName, fileDescription, fileAuthor)
-                flash('File successfully uploaded')
+        if file.filename == '':
+            flash('No file selected')
+            return redirect(request.url)
 
-                if sendNotif == 'on':
-                    pass # send push notifs to frontend
-            else:
-                flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
-                return redirect(request.url)
+        if file and allowed_filename(file.filename):
+            db.session.add(File(
+                name=request.form['name'],
+                filename=secure_filename(file.filename),
+                data=file.read(),
+            ))
+            db.session.commit()
 
-        elif formType == 'delete':
-            documentID = request.form['id']
-            delete_document(documentID)
+    files = File.query.all()
+    return render_template('files.html', files=files)
 
 
-    #all_documents = get_documents()
+@bp.route('/forms', methods=['GET'])
+@login_required
+def forms():
+    forms_pub  = Form.query.filter_by(private=False).all()
+    forms_priv = Form.query.filter_by(private=True).all()
 
-    if session.get('logged', None):
-        return render_template('documentpage.html')
-    else:
-        abort(403)
+    return render_template('forms.html',
+                    public_forms=forms_pub,
+                    private_forms=forms_priv)
 
-
-@bp.route('/formpage', methods=['GET'])
-def formpage():
-    """
-    GET => retrieve and display all available forms from postgresql db
-    POST => delete form
-    """
-
-    if request.method == 'POST':
-        formID = request.form['id']
-        #delete_form(formID)
-
-    #user = Admins.get_by_username(session['username'])
-    #isAdmin = user.admin
-
-    #public_forms = get_forms(private=False)
-
-    #if isAdmin: private_forms = get_forms(private=True)
-    #else: private_forms = []
-
-
-    if session.get('logged', None):
-        return render_template('formpage.html')
-    else:
-        abort(403)
 
 @bp.route('/logout')
+@login_required
 def logout():
-    """logout page: end session"""
-    session['logged'] = False
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for("view.login"))

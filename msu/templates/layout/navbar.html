@@ -1,25 +1,24 @@
+{% macro navlink(name, link) %}
+  <li class="nav-item">
+    <a class="nav-link" href="{{link}}">{{ name }}</a>
+  </li>
+{% endmacro %}
+
 {% block header %}
   <div class="col-sm-12">
     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-      <a class="navbar-brand" href="{{ url_for('view.newspage') }}">
+      <a class="navbar-brand" href="{{ url_for('view.posts') }}">
         <img src="{{url_for('static', filename='appIcon.png')}}" width="auto" height="40">
       </a>
-      <div class="container-fluid" id="navbarNav">
+      <nav class="container-fluid" id="navbarNav">
         <ul class="nav navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{{url_for('view.formpage')}}">Forms</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{url_for('view.documentpage')}}">Documents</a>
-          </li>
+          {{ navlink('Posts', url_for('view.posts')) }}
+          {{ navlink('Forms', url_for('view.forms')) }}
+          {{ navlink('Files', url_for('view.files')) }}
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li class="nav-item">
-            <a class="nav-link" href="#">{{g.username}}</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="{{url_for('view.logout')}}">Logout</a>
-          </li>
+          {{ navlink(g.username, '#') }}
+          {{ navlink('Logout', url_for('view.logout')) }}
         </ul>
       </div>
     </nav>

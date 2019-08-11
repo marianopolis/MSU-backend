@@ -1,4 +1,4 @@
-from flask import Blueprint, session, abort, request
+from flask import Blueprint, session, abort, request, g
 
 from msu import db
 from msu.models import Post, File, Form
@@ -6,7 +6,7 @@ from msu.models import Post, File, Form
 bp = Blueprint('api', __name__)
 
 def check_authorized():
-    if not session.get('logged', None):
+    if g.admin_id is None:
         abort(403)
 
 def json_post(post):
@@ -35,7 +35,7 @@ def json_form(form):
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
     posts = Post.query.all()
-    return {'data': [ json_post(p) for p in posts]}
+    return {'data': [json_post(p) for p in posts]}
 
 @bp.route('/api/posts/<int:id>', methods=['GET'])
 def get_post(id):

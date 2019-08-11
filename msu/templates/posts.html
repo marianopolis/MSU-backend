@@ -1,0 +1,44 @@
+{% extends 'layout/base_admin.html' %}
+
+{% block title %}
+Posts
+{% endblock %}
+
+{% block admin_content %}
+  <div class="row container-fluid to-show">
+    <div class="card col-5 card-format">
+      <div class="card-header"><h2>Create post</h2></div>
+
+      <div class="card-body col-sm-12">
+        <form method="POST" action="{{url_for('view.posts')}}">
+          <div class="form-group">
+            <label for="title" class="label">Title</label>
+            <input type="text" class="form-control" name="subject" id="subject" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editor" class="label">Body</label>
+            <textarea id="editor" name="body" required></textarea>
+          </div>
+
+          <input type="submit" name="submit" value="Submit" class="btn btn-raised btn-primary">
+        </form>
+      </div>
+    </div>
+
+    <div class="card col-7 card-format">
+      <div class="card-header"><h2>Posts</h2></div>
+      <div class="card-body col-sm-12">
+        {% for p in posts %}
+          <div class="col card card-format">
+            <h4>{{ p.subject }}</h4>
+            <p>{{ p.body }}</p>
+            <p>{{ p.inserted_at }}</p>
+          </div>
+        {% else %}
+          <div>No posts were found in the database.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
