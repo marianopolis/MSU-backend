@@ -86,6 +86,7 @@ def posts():
 @login_required
 def files():
     if request.method == 'POST':
+        flash(request.files)
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -96,16 +97,17 @@ def files():
             flash('No file selected')
             return redirect(request.url)
 
-        if file and allowed_filename(file.filename):
+        if file and allowed_file(file.filename):
             db.session.add(File(
                 name=request.form['name'],
                 filename=secure_filename(file.filename),
                 data=file.read(),
             ))
             db.session.commit()
+            flash('success')
 
     files = File.query.all()
-    return render_template('files.html', files=files)
+    return render_template('files.html', myFiles=files)
 
 
 @bp.route('/forms', methods=['GET'])
