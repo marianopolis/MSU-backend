@@ -4,6 +4,7 @@
 
 {% block content %}
   <div class="form-container card col-sm-4">
+    <img src="{{ url_for('static', filename='appIcon.png') }}" height="300" class="logo">
     <form method='POST'>
       <div class="form-group">
         <input class="form-control" type="text" placeholder="Username" name="username" required />

@@ -10,7 +10,7 @@ Posts
       <div class="card-header"><h2>Create post</h2></div>
 
       <div class="card-body col-sm-12">
-        <form method="POST" action="{{url_for('view.posts')}}">
+        <form method="POST" action="{{url_for('view.posts')}}" novalidate>
           <div class="form-group">
             <label for="title" class="label">Title</label>
             <input type="text" class="form-control" name="subject" id="subject" required>
@@ -30,9 +30,9 @@ Posts
       <div class="card-header"><h2>Posts</h2></div>
       <div class="card-body col-sm-12">
         {% for p in posts %}
-          <div class="col card card-format">
+          <div class="col card card-format" id="loaded-posts">
             <h4>{{ p.subject }}</h4>
-            <p>{{ p.body }}</p>
+            <div id="{{p.id}}"></div>
             <p>{{ p.inserted_at }}</p>
           </div>
         {% else %}
@@ -41,4 +41,5 @@ Posts
       </div>
     </div>
   </div>
+
 {% endblock %}

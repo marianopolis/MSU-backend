@@ -3,13 +3,11 @@
 {% block title %}Forms{% endblock %}
 
 {% macro form_card(row) %}
-  <div class="col card card-format">
-    <div class="row">
-      <div><p>{{ row.name }}</p></div>
-      <div><p>{{ row.inserted_at }}</p></div>
-    </div>
-
-    <h4>{{ row.subject }}</h4>
+  <div class="col card card-format" id="loaded-posts">
+    <p id="form-title">{{ row.name }}</p>
+    <p id="form-time">{{ row.inserted_at }}</p>
+    <hr>
+    <h4>{{row.subject}}</h4>
     <p>{{ row.body }}</p>
   </div>
 {% endmacro %}
@@ -17,14 +15,12 @@
 {% macro card_group(rows, head) %}
   <div class="card col-6 card-format">
     <div class="card-header"><h2>{{ head }}</h2></div>
-    <div class="card-body">
-      <div class="col-sm-12">
-        {% for row in rows %}
-          {{ form_card(row) }}
-        {% else %}
-          <div>No forms were found in the database.</div>
-        {% endfor %}
-      </div>
+    <div class="card-body col-sm-12">
+      {% for row in rows %}
+        {{ form_card(row) }}
+      {% else %}
+        <div>No forms were found in the database.</div>
+      {% endfor %}
     </div>
   </div>
 {% endmacro %}

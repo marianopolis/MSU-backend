@@ -24,5 +24,17 @@
 
   <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 
-  {{ simplemde.load_id('editor') }}
+  <script type="text/javascript">
+    var simplemde = new SimpleMDE({});
+
+    {% for p in posts %}
+
+      var markdownText = `{{p.body}}`;
+      console.log(simplemde.options.previewRender(markdownText))
+      $('#{{p.id}}').wrapInner(simplemde.options.previewRender(markdownText));
+
+    {% endfor %}
+
+  </script>
+
 {% endblock %}
