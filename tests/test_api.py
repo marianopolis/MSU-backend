@@ -127,7 +127,7 @@ def test_forms_get(client):
     assert len(data) == 1
 
 def test_forms_post(client):
-    rv = client.post('/api/forms', data={
+    rv = client.post('/api/forms', json={
         'subject': 'Hello World!',
         'body': 'Your app is terrible',
     })

@@ -88,10 +88,15 @@ def get_forms():
 
 @bp.route('/api/forms', methods=['POST'])
 def create_form():
+    if not request.is_json:
+        abort(400)
+
+    data = request.get_json()
     db.session.add(Form(
-        name=request.form.get('name'),
-        private=request.form.get('private'),
-        subject=request.form['subject'],
-        body=request.form['body'],
+        name=data.get('name'),
+        private=data.get('private'),
+        subject=data['subject'],
+        body=data['body'],
     ))
+    db.session.commit()
     return '', 201
