@@ -48,18 +48,19 @@ def test_post(sess):
     assert post.subject == 'Title'
     assert post.body == 'Hello World!'
 
+@pytest.mark.skip(reason="Uploads to S3")
 def test_file(sess):
     sess.add(File(
-        name='the document',
-        filename='file.png',
+        key='file.png',
+        desc='A picture of something',
         data=b'',
     ))
     sess.commit()
 
     file = File.query.first()
 
-    assert file.name == 'the document'
-    assert file.filename == 'file.png'
+    assert file.key == 'file.png'
+    assert file.desc == 'A picture of something'
     assert file.data == b''
 
 def test_form(sess):

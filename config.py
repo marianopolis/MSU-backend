@@ -10,6 +10,8 @@ class Config(object):
     SIMPLEMDE_JS_IIFE = True
     SIMPLEMDE_USE_CDN = True
 
+    S3_BUCKET = os.environ.get('S3_BUCKET')
+
 class DevConfig(Config):
     db_user = 'postgres'
     db_pass = 'postgres'

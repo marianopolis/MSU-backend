@@ -86,7 +86,6 @@ def posts():
 @login_required
 def files():
     if request.method == 'POST':
-        flash(request.files)
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -97,17 +96,21 @@ def files():
             flash('No file selected')
             return redirect(request.url)
 
-        if file and allowed_file(file.filename):
+        if File.query.filter_by(key=file.filename).first() is not None:
+            flash(f'File with name {file.filename} already exists')
+            return redirect(request.url)
+
+        if file.filename:
             db.session.add(File(
-                name=request.form['name'],
-                filename=secure_filename(file.filename),
-                data=file.read(),
+                key=secure_filename(file.filename),
+                desc=request.form['desc'],
+                data=file,
             ))
             db.session.commit()
             flash('success')
 
     files = File.query.all()
-    return render_template('files.html', myFiles=files)
+    return render_template('files.html', files=files)
 
 
 @bp.route('/forms', methods=['GET'])

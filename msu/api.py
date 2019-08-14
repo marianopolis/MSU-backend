@@ -31,6 +31,15 @@ def json_form(form):
 
     return r
 
+def json_file(file):
+    return {
+        'key': file.key,
+        'desc': file.desc,
+        'url': file.url,
+        'version': file.version,
+        'inserted_at': file.inserted_at,
+    }
+
 
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
@@ -100,3 +109,8 @@ def create_form():
     ))
     db.session.commit()
     return '', 201
+
+@bp.route('/api/files', methods=['GET'])
+def get_files():
+    files = File.query.all()
+    return {'data': [json_file(f) for f in files]}

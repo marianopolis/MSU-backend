@@ -1,10 +1,12 @@
 import secrets
 import hashlib
+import struct
 
 from sqlalchemy.orm import validates
 from sqlalchemy.sql import func
 
 from msu import db
+from msu import files
 
 def hash_pwd(pwd, salt):
     return hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
@@ -44,14 +46,30 @@ class Post(db.Model):
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, nullable=False)
-    filename = db.Column(db.Text, nullable=False)
-    data = db.Column(db.LargeBinary, nullable=False)
+    desc = db.Column(db.Text, nullable=False)
+    key = db.Column(db.Text, nullable=False, index=True, unique=True)
+    url = db.Column(db.Text, nullable=False)
     inserted_at = db.Column(db.DateTime, nullable=False,
                             server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False,
                            server_default=func.now(),
                            onupdate=func.now())
+
+    def __init__(self, key, desc, data):
+        self.key = key
+        self.desc = desc
+        self.url = files.upload(key, data)
+
+    @property
+    def version(self):
+        data = struct.pack('f', self.updated_at.timestamp())
+        return hashlib.sha1(data).hexdigest()
+
+    @validates('key', 'url')
+    def field_readonly(self, key, val):
+        if getattr(self, key) is not None:
+            raise ValueError(f'{key} is read-only')
+        return val
 
 class Form(db.Model):
     id = db.Column(db.Integer, primary_key=True)
