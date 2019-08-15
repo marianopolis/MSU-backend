@@ -9,12 +9,15 @@ def check_authorized():
     if g.admin_id is None:
         abort(403)
 
+def fmt_time(time):
+    return time.strftime("%b %d, %Y")
+
 def json_post(post):
     return {
         'id': post.id,
         'subject': post.subject,
         'body': post.body,
-        'inserted_at': post.inserted_at,
+        'inserted_at': fmt_time(post.inserted_at),
     }
 
 def json_form(form):
@@ -23,7 +26,7 @@ def json_form(form):
         'subject': form.subject,
         'body': form.body,
         'private': form.private,
-        'inserted_at': form.inserted_at,
+        'inserted_at': fmt_time(form.inserted_at),
     }
 
     if form.name is not None:
@@ -37,13 +40,13 @@ def json_file(file):
         'desc': file.desc,
         'url': file.url,
         'version': file.version,
-        'inserted_at': file.inserted_at,
+        'inserted_at': fmt_time(file.inserted_at),
     }
 
 
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.inserted_at.desc()).all()
     return {'data': [json_post(p) for p in posts]}
 
 @bp.route('/api/posts/<int:id>', methods=['GET'])
@@ -112,5 +115,5 @@ def create_form():
 
 @bp.route('/api/files', methods=['GET'])
 def get_files():
-    files = File.query.all()
+    files = File.query.order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
