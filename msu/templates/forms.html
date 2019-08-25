@@ -9,6 +9,10 @@
     <hr>
     <h4>{{row.subject}}</h4>
     <p>{{ row.body }}</p>
+    <form method="POST" action="{{url_for('view.forms')}}" class="delete-form">
+      <input type="hidden" name="form-id" value="{{row.id}}">
+      <input type="submit" name="submit" value="Delete" class="btn btn-raised btn-danger">
+    </form>
   </div>
 {% endmacro %}
 

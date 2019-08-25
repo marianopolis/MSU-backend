@@ -71,12 +71,29 @@ def login():
 @login_required
 def posts():
     if request.method == 'POST':
-        db.session.add(Post(
-            subject=request.form['subject'],
-            body=request.form['body'],
-            admin_id=session['admin_id'],
-        ))
-        db.session.commit()
+
+        form_type = request.form['form_type']
+
+        if form_type == 'add':
+            db.session.add(Post(
+                subject=request.form['subject'],
+                body=request.form['body'],
+                admin_id=session['admin_id'],
+            ))
+            db.session.commit()
+
+        elif form_type == 'delete':
+            db.session.delete(Post.query.get_or_404(
+                request.form['post-id']
+            ))
+            db.session.commit()
+
+        elif form_type == 'archive':
+            post = Post.query.get_or_404(
+                request.form['post-id']
+            )
+            post.archived = True
+            db.session.commit()
 
     posts = Post.query.filter_by(archived=False).all()
     return render_template('posts.html', posts=posts)
@@ -113,9 +130,15 @@ def files():
     return render_template('files.html', files=files)
 
 
-@bp.route('/forms', methods=['GET'])
+@bp.route('/forms', methods=['GET', 'POST'])
 @login_required
 def forms():
+    if request.method == 'POST':
+        db.session.delete(Form.query.get_or_404(
+            request.form['form-id']
+        ))
+        db.session.commit()
+
     forms_pub  = Form.query.filter_by(private=False).all()
     forms_priv = Form.query.filter_by(private=True).all()
 

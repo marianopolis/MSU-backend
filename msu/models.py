@@ -43,6 +43,9 @@ class Post(db.Model):
     archived = db.Column(db.Boolean, nullable=False, default=False)
     inserted_at = db.Column(db.DateTime, nullable=False,
                             server_default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False,
+                            server_default=func.now(),
+                            onupdate=func.now())
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
