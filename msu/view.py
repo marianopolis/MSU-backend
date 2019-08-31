@@ -88,6 +88,15 @@ def posts():
             ))
             db.session.commit()
 
+        elif form_type == 'edit':
+            post = Post.query.get_or_404(
+                request.form['post-id']
+            )
+            post.subject = request.form['subject']
+            post.body = request.form['body']
+            db.session.commit()
+            print(post.inserted_at, post.updated_at)
+
         elif form_type == 'archive':
             post = Post.query.get_or_404(
                 request.form['post-id']

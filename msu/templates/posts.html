@@ -5,12 +5,12 @@ Posts
 {% endblock %}
 
 {% block admin_content %}
-  <div class="row container-fluid to-show">
+  <div id="main" class="row container-fluid to-show">
     <div class="card col-5 card-format">
-      <div class="card-header"><h2>Create post</h2></div>
+      <div class="card-header" id="card-header"><h2>Create post</h2></div>
 
       <div class="card-body col-sm-12">
-        <form method="POST" action="{{url_for('view.posts')}}" novalidate>
+        <form method="POST" id="post-form" action="{{url_for('view.posts')}}" novalidate>
           <div class="form-group">
             <label for="title" class="label">Title</label>
             <input type="text" class="form-control" name="subject" id="subject" required>
@@ -20,7 +20,7 @@ Posts
             <label for="editor" class="label">Body</label>
             <textarea id="editor" name="body" required></textarea>
           </div>
-          <input type="hidden" name="form_type" value="add">
+          <input type="hidden" id="form_type" name="form_type" value="add">
           <input type="submit" name="submit" value="Submit" class="btn btn-raised btn-primary">
         </form>
       </div>
@@ -31,9 +31,9 @@ Posts
       <div class="card-body col-sm-12">
         {% for p in posts %}
           <div class="col card card-format" id="loaded-posts">
-            <h4>{{ p.subject }}</h4>
-            <div id="{{p.id}}"></div>
-            <p>{{ p.inserted_at }}</p>
+            <h4 id="subject-{{p.id}}">{{ p.subject }}</h4>
+            <div id="body-{{p.id}}"></div>
+            <p id="insert-{{p.id}}">{{ p.inserted_at }}</p>
             <form method="POST" action="{{url_for('view.posts')}}" class="archive-form">
               <input type="hidden" name="form_type" value="archive">
               <input type="hidden" name="post-id" value="{{p.id}}">
@@ -44,6 +44,7 @@ Posts
               <input type="hidden" name="post-id" value="{{p.id}}">
               <input type="submit" name="submit" value="Delete" class="btn btn-raised btn-danger">
             </form>
+            <div class="edit-button"><button class="btn btn-raised btn-success" value="{{p.id}}" onclick="editPost(this.value)" id="editing-{{p.id}}">Edit</button></div>
           </div>
         {% else %}
           <div>No posts were found in the database.</div>
