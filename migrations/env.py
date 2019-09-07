@@ -8,6 +8,11 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# Add working dir to python path, so that we can
+# import our project (import msu)
+import sys, os
+sys.path.insert(0, os.getcwd())
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
