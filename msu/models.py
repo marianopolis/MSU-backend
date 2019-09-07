@@ -41,9 +41,9 @@ class Post(db.Model):
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'),
                          nullable=False)
     archived = db.Column(db.Boolean, nullable=False, default=False)
-    inserted_at = db.Column(db.DateTime, nullable=False,
+    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=func.now())
-    updated_at = db.Column(db.DateTime, nullable=False,
+    updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=func.now(),
                             onupdate=func.now())
 
@@ -52,9 +52,9 @@ class File(db.Model):
     desc = db.Column(db.Text, nullable=False)
     key = db.Column(db.Text, nullable=False, index=True, unique=True)
     url = db.Column(db.Text, nullable=False)
-    inserted_at = db.Column(db.DateTime, nullable=False,
+    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=func.now())
-    updated_at = db.Column(db.DateTime, nullable=False,
+    updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
                            server_default=func.now(),
                            onupdate=func.now())
 
@@ -80,7 +80,7 @@ class Form(db.Model):
     subject = db.Column(db.Text, nullable=False)
     body = db.Column(db.Text, nullable=False)
     private = db.Column(db.Boolean, nullable=False, default=False)
-    inserted_at = db.Column(db.DateTime, nullable=False,
+    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=func.now())
 
     @validates('name')
