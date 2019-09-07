@@ -1,7 +1,15 @@
-from flask import Blueprint, session, abort, request, g
+from flask import (
+    Blueprint,
+    session,
+    abort,
+    request,
+    g,
+    current_app,
+)
 
 from msu import db
 from msu.models import Post, File, Form
+from msu.events import get_events_data
 
 bp = Blueprint('api', __name__)
 
@@ -43,6 +51,13 @@ def json_file(file):
         'inserted_at': fmt_time(file.inserted_at),
     }
 
+@bp.route('/api/events', methods=['GET'])
+def get_events():
+    group_id = current_app.config['FB_GROUP_ID']
+    access_tok = current_app.config['FB_ACCESS_TOKEN']
+
+    data = get_events_data(group_id, access_tok)
+    return {'data': data}
 
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():

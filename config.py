@@ -12,6 +12,9 @@ class Config(object):
 
     S3_BUCKET = os.environ.get('S3_BUCKET')
 
+    FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
+    FB_ACCESS_TOKEN = os.environ.get('FB_ACCESS_TOKEN')
+
 class DevConfig(Config):
     db_user = 'postgres'
     db_pass = 'postgres'
