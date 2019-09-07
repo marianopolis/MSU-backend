@@ -17,15 +17,13 @@ def check_authorized():
     if g.admin_id is None:
         abort(403)
 
-def fmt_time(time):
-    return time.strftime("%b %d, %Y")
-
 def json_post(post):
     return {
         'id': post.id,
         'subject': post.subject,
         'body': post.body,
-        'inserted_at': fmt_time(post.inserted_at),
+        'inserted_at': post.inserted_at,
+        'updated_at': post.updated_at,
     }
 
 def json_form(form):
@@ -34,7 +32,7 @@ def json_form(form):
         'subject': form.subject,
         'body': form.body,
         'private': form.private,
-        'inserted_at': fmt_time(form.inserted_at),
+        'inserted_at': form.inserted_at,
     }
 
     if form.name is not None:
@@ -48,7 +46,7 @@ def json_file(file):
         'desc': file.desc,
         'url': file.url,
         'version': file.version,
-        'inserted_at': fmt_time(file.inserted_at),
+        'inserted_at': file.inserted_at,
     }
 
 @bp.route('/api/events', methods=['GET'])
