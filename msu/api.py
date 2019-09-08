@@ -47,6 +47,7 @@ def json_file(file):
         'url': file.url,
         'version': file.version,
         'inserted_at': file.inserted_at,
+        'updated_at': file.updated_at,
     }
 
 @bp.route('/api/events', methods=['GET'])
