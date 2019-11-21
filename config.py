@@ -15,6 +15,13 @@ class Config(object):
     FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
     FB_ACCESS_TOKEN = os.environ.get('FB_ACCESS_TOKEN')
 
+    # Contents of the firebase app's service account
+    # private key json file.
+    #
+    # https://firebase.google.com/docs/functions/config-env
+    FIREBASE_SERVICE_ACCOUNT_JSON = \
+        os.environ.get('FIREBASE_SERVICE_ACCOUNT_JSON')
+
 class DevConfig(Config):
     db_user = 'postgres'
     db_pass = 'postgres'

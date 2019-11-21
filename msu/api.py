@@ -8,7 +8,7 @@ from flask import (
 )
 
 from msu import db
-from msu.models import Post, File, Form
+from msu.models import Post, File, Form, PushNotifDevice
 from msu.events import get_events_data
 
 bp = Blueprint('api', __name__)
@@ -132,3 +132,24 @@ def create_form():
 def get_files():
     files = File.query.order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
+
+@bp.route('/api/push', methods=['POST'])
+def register_token():
+    if not request.is_json:
+        abort(400)
+
+    data = request.get_json()
+    dev = PushNotifDevice.query.get(data['token'])
+    if dev is None:
+        db.session.add(PushNotifDevice(
+            token=data['token'],
+            os=data['os'],
+        ))
+    else:
+        # Update updated_at field of existing token to prevent
+        # it from expiring.
+        dev.query.update({})
+
+    db.session.commit()
+
+    return '', 201

@@ -95,5 +95,16 @@ class Form(db.Model):
         assert len(subject) <= 140
         return subject
 
-    def insert(self):
-        pass
+class PushNotifDevice(db.Model):
+    token = db.Column(db.Text, primary_key=True)
+    os = db.Column(db.Text, nullable=False)
+    inserted_at = db.Column(db.DateTime, nullable=False,
+                            server_default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False,
+                           server_default=func.now(),
+                           onupdate=func.now())
+
+    @validates('os')
+    def validate_os(self, key, os):
+        assert os in ['ios', 'android']
+        return os
