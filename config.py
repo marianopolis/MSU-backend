@@ -11,7 +11,8 @@ class Config(object):
     SIMPLEMDE_USE_CDN = True
 
     # For use in file handling. See msu/files.py.
-    S3_BUCKET = os.environ.get('S3_BUCKET')
+    S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')
+    S3_BUCKET_FILES = os.environ.get('S3_BUCKET_FILES')
 
     # For use in facebook event retrieval. See msu/events.py.
     FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
