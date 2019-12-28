@@ -10,7 +10,8 @@ class Config(object):
     SIMPLEMDE_JS_IIFE = True
     SIMPLEMDE_USE_CDN = True
 
-    S3_BUCKET = os.environ.get('S3_BUCKET')
+    S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')
+    S3_BUCKET_FILES = os.environ.get('S3_BUCKET_FILES')
 
     FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
     FB_ACCESS_TOKEN = os.environ.get('FB_ACCESS_TOKEN')
