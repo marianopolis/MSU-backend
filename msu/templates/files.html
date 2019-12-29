@@ -5,10 +5,10 @@ Files
 {% endblock %}
 
 {% block admin_content %}
-  <div class="row container-fluid to-show">
-    <div class="card col-6 card-format">
+  <div class="d-flex p-2 row bd-highlight">
+    <div class="card card-format bd-highlight">
       <div class="card-header"><h2>Upload a document</h2></div>
-        <div class="card-body col-sm-12">
+      <div class="card-body col-sm-12">
         {% for msg in get_flashed_messages() %}
           <div class="alert alert-danger" role="alert">{{msg}}</div> 
         {% endfor %}
@@ -28,10 +28,10 @@ Files
         </form>
       </div>
     </div>
-    <div class="card col-6 card-format">
+    <div class="card card-format flex-grow-1 bd-highlight">
       <div class="card-header"><h2>Uploaded documents</h2></div>
-        <div class="card-body col-sm-12">
-          {% for row in files %}
+      <div class="card-body col-sm-12">
+        {% for row in files %}
             <div class="col card card-format" id="loaded-files">
               <div class="card-header">{{row.key}}</div>
               <div class="card-body">

@@ -4,6 +4,7 @@ The views defined here are mostly for use by the administrators.
 """
 
 import functools
+
 from flask import (
     Blueprint,
     g,
@@ -11,7 +12,6 @@ from flask import (
     redirect,
     url_for,
     flash,
-    abort,
     request,
     render_template,
     current_app
@@ -97,6 +97,11 @@ def login():
     return render_template('login.html')
 
 
+@bp.route('/calendar', methods=['GET', 'POST'])
+def calendar():
+    return render_template("calendar.html")
+
+
 @bp.route('/posts', methods=['GET', 'POST'])
 @login_required
 def posts():
@@ -119,7 +124,10 @@ def posts():
                 request.form['post-id']
             )
             post.subject = request.form['subject']
-            post.body = request.form['body']
+            post.body = request.form['sub-edit']
+            db.session.commit()
+            print(post.inserted_at, post.updated_at)
+
         elif form_type == 'archive':
             post = Post.query.get_or_404(
                 request.form['post-id']

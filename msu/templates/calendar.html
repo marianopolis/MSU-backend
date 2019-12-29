@@ -1,0 +1,22 @@
+{% extends 'layout/base_calendar.html' %}
+
+{% block title %}
+Calendar
+{% endblock %}
+
+{% block admin_content %}
+  <div class="d-flex p-2 row bd-highlight">
+    <div class="card card-format bd-highlight">
+      <div class="card-body col-sm-8">
+        <iframe src="https://calendar.google.com/calendar/b/3/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FToronto&amp;src=bXN0dWRlbnR1bmlvbmNvbmdyZXNzQGdtYWlsLmNvbQ&amp;color=%2322AA99&amp;showTitle=1&amp;showNav=1&amp;showDate=1&amp;showPrint=1&amp;showTabs=1&amp;showCalendars=1&amp;showTz=1"
+                style="border:solid 1px #777; padding: 1%;" width="700" height="550" frameborder="0" scrolling="no"></iframe>
+      </div>
+    </div>
+    <div class="card card-format flex-grow-1 bd-highlight">
+        <div class="card-body col-sm-4">
+          Events
+        </div>
+      </div>
+  </div>
+
+{% endblock %}

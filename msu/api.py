@@ -25,6 +25,8 @@ from flask import (
 from msu import db
 from msu.models import Post, File, Form, CongressMember
 from msu.events import get_events_data
+from msu.calendar import build_service
+import datetime
 
 bp = Blueprint('api', __name__)
 
@@ -165,3 +167,60 @@ def create_form():
 def get_files():
     files = File.query.order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
+
+
+# Calendar Events
+
+@bp.route('/api/calendar', methods=['GET'])
+def get_events():
+    """Getting the upcoming 10 events"""
+    check_authorized()
+    service = build_service()
+    now = datetime.datetime.utcnow().isoformat() + 'Z'
+    events_result = service.events().list(calendarId='primary', timeMin=now,
+                                          maxResults=10, singleEvents=True,
+                                          orderBy='startTime').execute()
+    events = events_result.get('items', [])
+    if not events: return 'No upcoming events found.'
+    return {'data': [event['summary'] for event in events]}
+
+
+@bp.route('/api/calendar', methods=['POST'])
+def create_event():
+    check_authorized()
+    service = build_service()
+    event = {
+        'summary': request.form.get('summary'),
+        'location': request.form.get('location'),
+        'description': request.form.get('description'),
+        'start': {
+            'dateTime': request.form.get('startTime'),
+            'timeZone': 'Canada/Montreal',
+        },
+        'end': {
+            'dateTime': request.form.get('endTime'),
+            'timeZone': 'Canada/Montreal',
+        },
+        'reminders': {
+            'useDefault': True,
+        },
+    }
+
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    return '', 201
+
+
+@bp.route('/api/calendar/<int:id>', methods=['PUT', 'PATCH'])
+def update_event(id):
+    check_authorized()
+    abort(501)
+
+
+@bp.route('/api/calendar/<str:id>', methods=['DELETE'])
+def delete_event(id):
+    check_authorized()
+    service = build_service()
+    service.events().delete(
+        calendarId='mstudentunioncongress@gmail.com',
+        eventId=id).execute()
+    return '', 204
