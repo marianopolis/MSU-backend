@@ -171,22 +171,22 @@ def get_files():
 
 # Calendar Events
 
-@bp.route('/api/calendar', methods=['GET'])
-def get_events():
+@bp.route('/api/calendar', defaults={'num': 10, 'time': datetime.datetime.utcnow().isoformat() + 'Z'}, methods=['GET'])
+@bp.route('/api/calendar/<int:num>/<string:time>', methods=['GET'])
+def get_cal_events(num, time):
     """Getting the upcoming 10 events"""
-    check_authorized()
+    # check_authorized()
     service = build_service()
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
-    events_result = service.events().list(calendarId='primary', timeMin=now,
-                                          maxResults=10, singleEvents=True,
+    events_result = service.events().list(calendarId='primary', timeMin=time,
+                                          maxResults=num, singleEvents=True,
                                           orderBy='startTime').execute()
     events = events_result.get('items', [])
     if not events: return 'No upcoming events found.'
-    return {'data': [event['summary'] for event in events]}
+    return {'data': [event for event in events]}
 
 
 @bp.route('/api/calendar', methods=['POST'])
-def create_event():
+def create_cal_event():
     check_authorized()
     service = build_service()
     event = {
@@ -211,13 +211,13 @@ def create_event():
 
 
 @bp.route('/api/calendar/<int:id>', methods=['PUT', 'PATCH'])
-def update_event(id):
+def update_cal_event(id):
     check_authorized()
     abort(501)
 
 
-@bp.route('/api/calendar/<str:id>', methods=['DELETE'])
-def delete_event(id):
+@bp.route('/api/calendar/<string:id>', methods=['DELETE'])
+def delete_cal_event(id):
     check_authorized()
     service = build_service()
     service.events().delete(

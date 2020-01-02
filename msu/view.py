@@ -97,11 +97,6 @@ def login():
     return render_template('login.html')
 
 
-@bp.route('/calendar', methods=['GET', 'POST'])
-def calendar():
-    return render_template("calendar.html")
-
-
 @bp.route('/posts', methods=['GET', 'POST'])
 @login_required
 def posts():
