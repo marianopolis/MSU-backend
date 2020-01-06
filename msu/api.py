@@ -75,6 +75,9 @@ def get_events():
     group_id = current_app.config['FB_GROUP_ID']
     access_tok = current_app.config['FB_ACCESS_TOKEN']
 
+    if group_id is None or access_tok is None:
+        return '', 503
+
     data = get_events_data(group_id, access_tok)
     return {'data': data}
 
