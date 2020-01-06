@@ -1,3 +1,18 @@
+"""REST resources to be consumed by clients.
+
+This module defines all the REST API routes provided by the
+application. All returned data MUST be wrapped in a `data`
+key as such:
+
+    {
+      "data": ...data to be returned...
+    }
+
+This module loosely follows the Microsoft REST API design guidelines,
+which can be seen at
+[https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design].
+"""
+
 from flask import (
     Blueprint,
     session,
@@ -13,11 +28,16 @@ from msu.events import get_events_data
 
 bp = Blueprint('api', __name__)
 
-def check_authorized():
+def ensure_authorized():
+    """Abort if user isn't an admin."""
     if g.admin_id is None:
         abort(403)
 
-def json_post(post):
+
+# The json_* format the given objects into
+# dictionaries which are returned by the API
+# as JSON data.
+def json_post(post: Post):
     return {
         'id': post.id,
         'subject': post.subject,
@@ -26,7 +46,7 @@ def json_post(post):
         'updated_at': post.updated_at,
     }
 
-def json_form(form):
+def json_form(form: Form):
     r = {
         'id': form.id,
         'subject': form.subject,
@@ -40,7 +60,7 @@ def json_form(form):
 
     return r
 
-def json_file(file):
+def json_file(file: File):
     return {
         'key': file.key,
         'desc': file.desc,
@@ -54,6 +74,9 @@ def json_file(file):
 def get_events():
     group_id = current_app.config['FB_GROUP_ID']
     access_tok = current_app.config['FB_ACCESS_TOKEN']
+
+    if group_id is None or access_tok is None:
+        return '', 503
 
     data = get_events_data(group_id, access_tok)
     return {'data': data}
@@ -70,7 +93,7 @@ def get_post(id):
 
 @bp.route('/api/posts', methods=['POST'])
 def create_post():
-    check_authorized()
+    ensure_authorized()
     post = Post(
         subject=request.form['subject'],
         body=request.form['body'],
@@ -88,7 +111,7 @@ def update_post(id):
 
 @bp.route('/api/posts/<int:id>', methods=['DELETE'])
 def delete_post(id):
-    check_authorized()
+    ensure_authorized()
     p = Post.query.get_or_404(id)
     db.session.delete(p)
     db.session.commit()
@@ -97,7 +120,7 @@ def delete_post(id):
 
 @bp.route('/api/forms', methods=['GET'])
 def get_forms():
-    check_authorized()
+    ensure_authorized()
 
     forms = None
     private = request.args.get('private')

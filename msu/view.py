@@ -1,3 +1,8 @@
+"""Views which render HTML templates.
+
+The views defined here are mostly for use by the administrators.
+"""
+
 import functools
 from flask import (
     Blueprint,
@@ -14,13 +19,16 @@ from werkzeug import secure_filename
 
 from . import db
 from .models import Admin, Form, Post, File
-from .functions import *
 
 bp = Blueprint('view', __name__)
 
 
 def login_required(view):
-    """View decorator to redirect anonymous users."""
+    """View decorator to redirect anonymous users.
+
+    Views using this decorator will redirect unauthenticated
+    users to the login page.
+    """
 
     @functools.wraps(view)
     def wrapped(**kw):
@@ -34,6 +42,12 @@ def login_required(view):
 
 @bp.before_app_request
 def load_logged_in_admin():
+    """Triggered before each request.
+
+    Configure some globals from the session to
+    use in the views. See the flask documentation
+    for g for more information.
+    """
     g.admin_id = session.get('admin_id')
     g.username = session.get('username')
 
@@ -41,6 +55,7 @@ def load_logged_in_admin():
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # Redirect previously authenticated users.
     if g.admin_id is not None:
         return redirect(url_for('view.posts'))
 
@@ -80,29 +95,23 @@ def posts():
                 body=request.form['body'],
                 admin_id=session['admin_id'],
             ))
-            db.session.commit()
-
         elif form_type == 'delete':
             db.session.delete(Post.query.get_or_404(
                 request.form['post-id']
             ))
-            db.session.commit()
-
         elif form_type == 'edit':
             post = Post.query.get_or_404(
                 request.form['post-id']
             )
             post.subject = request.form['subject']
             post.body = request.form['body']
-            db.session.commit()
-            print(post.inserted_at, post.updated_at)
-
         elif form_type == 'archive':
             post = Post.query.get_or_404(
                 request.form['post-id']
             )
             post.archived = True
-            db.session.commit()
+
+        db.session.commit()
 
     posts = Post.query.filter_by(archived=False).all()
     return render_template('posts.html', posts=posts)

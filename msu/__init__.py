@@ -1,3 +1,9 @@
+"""Entrypoint into flask application.
+
+Given a module (msu in our case), flask runs the create_app function
+and subsequently uses the created app.
+"""
+
 from datetime import datetime
 
 from flask import Flask
@@ -8,9 +14,16 @@ from flask_simplemde import SimpleMDE
 
 from config import configs
 
-# Custom encoder to encode datetimes as ISO8061
+
 class CustomJSONEncoder(JSONEncoder):
+    """Custom encoder to encode datetimes as ISO8061.
+
+    Used to override the default JSON encoder used by flask,
+    which doesn't properly format dates.
+    """
+
     def default(self, obj):
+        # Override only the format of datetime instances.
         if isinstance(obj, datetime):
             return obj.isoformat()
         else:
@@ -24,6 +37,8 @@ def create_app(testing=False):
     app = Flask(__name__)
     app.json_encoder = CustomJSONEncoder
 
+    # Use relevant configuration based on value
+    # of FLASK_ENV environment variable.
     if testing:
         app.config.from_object(configs['testing'])
     else:

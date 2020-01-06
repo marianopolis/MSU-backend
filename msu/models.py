@@ -1,3 +1,36 @@
+"""Database models.
+
+The database is interfaced to using SQLAlchemy. The classes defined
+here are mimicked into database schemas, so interactions with the
+database should go through these classes. The db connection object
+is initialised in `__init__.py`.
+
+Whenever a model is changed, added, or deleted, the database
+must be _migrated_ to reflect the changes. These updates
+are handled by Flask-Migrate.
+
+Example:
+  After making any migration, generate the migration file:
+
+    $ flask db migrate
+
+  You'll need to manually edit the file, after which you
+  can apply the migration:
+
+    $ flask db upgrade
+
+  In case there's an issue, the migration can be reverted:
+
+    $ flask db downgrade
+
+
+For documentation on Flask-Migrate, see
+[https://flask-migrate.readthedocs.io/en/latest/]
+
+For a quick intro to using SQLAlchemy with Flask, see
+[https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/]
+"""
+
 import secrets
 import hashlib
 import struct
@@ -9,6 +42,7 @@ from msu import db
 from msu import files
 
 def hash_pwd(pwd, salt):
+    """Return a hashed password."""
     return hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
 
 class Admin(db.Model):
@@ -94,6 +128,3 @@ class Form(db.Model):
     def validate_subject(self, key, subject):
         assert len(subject) <= 140
         return subject
-
-    def insert(self):
-        pass
