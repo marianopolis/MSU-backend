@@ -65,7 +65,6 @@ def json_file(file: File):
         'key': file.key,
         'desc': file.desc,
         'url': file.url,
-        'version': file.version,
         'inserted_at': file.inserted_at,
         'updated_at': file.updated_at,
     }

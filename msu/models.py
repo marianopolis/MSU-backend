@@ -97,11 +97,6 @@ class File(db.Model):
         self.desc = desc
         self.url = files.upload(key, data)
 
-    @property
-    def version(self):
-        data = struct.pack('f', self.updated_at.timestamp())
-        return hashlib.sha1(data).hexdigest()
-
     @validates('key', 'url')
     def field_readonly(self, key, val):
         if getattr(self, key) is not None:
