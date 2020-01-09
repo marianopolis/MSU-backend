@@ -40,6 +40,8 @@ ALTER USER postgres WITH SUPERUSER;
 \q
 ```
 
+If Postgres already has a user not called `postgres`, you can create one by running `psql -U postgres`
+
 The default configuration under `config.py` assumes you have the
 `msu_dev` and `msu_test` databases created, which are used for
 development and testing, respectively. You can create them by doing:
@@ -74,8 +76,16 @@ before running flask:
 
 ### Run the app
 
+On Unix:
 ```
 $ FLASK_APP=msu FLASK_ENV=development flask run --host=0.0.0.0
+```
+
+On Windows:
+```
+> set FLASK_APP=msu
+> set FLASK_ENV=development
+flask run --host=0.0.0.0
 ```
 
 The `0.0.0.0` is to allow devices on your local network to connect
