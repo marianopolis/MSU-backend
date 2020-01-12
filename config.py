@@ -14,6 +14,8 @@ class Config(object):
     S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')
     S3_BUCKET_FILES = os.environ.get('S3_BUCKET_FILES')
 
+    GOOGLE_CAL_EMAIL = "mstudentunioncongress@gmail.com"
+
     # For use in facebook event retrieval. See msu/events.py.
     FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
     FB_ACCESS_TOKEN = os.environ.get('FB_ACCESS_TOKEN')

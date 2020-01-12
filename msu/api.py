@@ -221,6 +221,6 @@ def delete_cal_event(id):
     check_authorized()
     service = build_service()
     service.events().delete(
-        calendarId='mstudentunioncongress@gmail.com',
+        calendarId=current_app.config["mstudentunioncongress@gmail.com"],
         eventId=id).execute()
     return '', 204

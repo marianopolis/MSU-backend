@@ -3,8 +3,6 @@
 
 # ignore .env file with secret key, app config and database url
 .env
-.DS_Store
-.idea/
 token.pickle
 
 # ignore compilation files when running
@@ -12,4 +10,4 @@ token.pickle
 __pycache__/
 
 # ignore credentials
-credentials.json
+gcal_credentials.json
