@@ -34,45 +34,61 @@
 
     {% endfor %}
 
-    
+
     function editPost(clicked_value) {
-      var original_state = document.getElementById("main").innerHTML;
+        var main_form_group = document.getElementById("form-main");
+        var sub_form_group = document.getElementById("form-sub");
+        main_form_group.style.display = "none";
+        sub_form_group.style.display = "block";
 
-      var postID = clicked_value;
-      var postSubject = document.getElementById("subject-" + postID).innerHTML;
-      var postBody = document.getElementById("body-" + postID).getElementsByTagName("p")[0].innerHTML;
-      console.log(postBody);
-      var insertTime = document.getElementById("insert-" + postID).innerHTML;
+        var original_state = document.getElementById("main").innerHTML;
 
-      var card_header = document.getElementById("card-header");
-      var card_subject = document.getElementById("subject");
+        var postID = clicked_value;
+        var postSubject = document.getElementById("subject-" + postID).innerHTML;
 
-      card_header.innerHTML = "<h2 style='display:inline-block;'>Editing Post</h2><p style='float:right; display: inline-block;margin-top:10px;'>" + "Inserted at " + insertTime + "</p>";
-      card_subject.value = postSubject;
-      var simplemde = new SimpleMDE({ element: document.getElementById("editor") });
-      simplemde.value(postBody);
+        var post = document.getElementById("body-" + postID).getElementsByTagName("p")[0];
+        if (post == null) {
+            var postBody = "";
+        } else {
+          var postBody = post.innerHTML;
+        }
 
-      var form_type = document.getElementById("form_type");
-      form_type.setAttribute("value", "edit");
+        console.log(postBody);
+        var insertTime = document.getElementById("insert-" + postID).innerHTML;
 
-      var form = document.getElementById("post-form");
-      var form_id = document.createElement("Input");
-      form_id.setAttribute("type", "hidden");
-      form_id.setAttribute("value", postID);
-      form_id.setAttribute("name", 'post-id');
-      form.appendChild(form_id);
+        var card_header = document.getElementById("card-header");
+        var card_subject = document.getElementById("subject");
+
+        card_header.innerHTML = "<h2 style='display:inline-block;'>Editing Post</h2><p style='float:right; display: inline-block;margin-top:10px;'>" + "Inserted at " + insertTime + "</p>";
+        card_subject.value = postSubject;
+        var simplemde2 = new SimpleMDE({element: document.getElementById("sub-edit")});
+        simplemde2.value(postBody);
+
+        var form_type = document.getElementById("form_type");
+        form_type.setAttribute("value", "edit");
+
+        var form = document.getElementById("post-form");
+        var form_id = document.createElement("Input");
+        form_id.setAttribute("type", "hidden");
+        form_id.setAttribute("value", postID);
+        form_id.setAttribute("name", 'post-id');
+        form.appendChild(form_id);
 
       var editButton = document.getElementById("editing-" + postID);
-      editButton.setAttribute("class", "btn btn-raised btn-warning");
-      editButton.setAttribute("value", original_state);
-      editButton.setAttribute("onClick", "cancel(this.value)");
-      editButton.innerHTML = "Cancel";
+        editButton.setAttribute("class", "btn btn-raised btn-warning");
+        editButton.setAttribute("value", original_state);
+        editButton.setAttribute("onClick", "cancel(this.value)");
+        editButton.innerHTML = "Cancel";
     }
 
-    
+
     function cancel(original_state) {
-      var main = document.getElementById("main");
-      main.innerHTML = original_state;
+        var main = document.getElementById("main");
+        main.innerHTML = original_state;
+        var main_form_group = document.getElementById("form-main");
+        var sub_form_group = document.getElementById("form-sub");
+        main_form_group.style.display = "block";
+        sub_form_group.style.display = "none";
     }
 
   </script>

@@ -14,6 +14,12 @@ class Config(object):
     S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')
     S3_BUCKET_FILES = os.environ.get('S3_BUCKET_FILES')
 
+    # Calendar to access from the calendar tab, and
+    # service account that has read access to that calendar.
+    # Calendar ID can be a gmail address.
+    GOOGLE_CALENDAR_ID = os.environ.get('GOOGLE_CALENDAR_ID')
+    GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get('GOOGLE_SERVICE_ACCOUNT_JSON')
+
     # For use in facebook event retrieval. See msu/events.py.
     FB_GROUP_ID = os.environ.get('FB_GROUP_ID')
     FB_ACCESS_TOKEN = os.environ.get('FB_ACCESS_TOKEN')

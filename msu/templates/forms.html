@@ -2,9 +2,10 @@
 
 {% block title %}Forms{% endblock %}
 
+<div class="d-flex p-2 bd-highlight">
 {% macro form_card(row) %}
-  <div class="col card card-format" id="loaded-posts">
-    <p id="form-title">{{ row.name }}</p>
+    <div class="card card-format bd-highlight flex-fill" id="loaded-posts">
+        <p id="form-title">{{ row.name }}</p>
     <p id="form-time">{{ row.inserted_at }}</p>
     <hr>
     <h4>{{row.subject}}</h4>
@@ -17,8 +18,8 @@
 {% endmacro %}
 
 {% macro card_group(rows, head) %}
-  <div class="card col-6 card-format">
-    <div class="card-header"><h2>{{ head }}</h2></div>
+    <div class="card card-format bd-highlight flex-fill">
+        <div class="card-header"><h2>{{ head }}</h2></div>
     <div class="card-body col-sm-12">
       {% for row in rows %}
         {{ form_card(row) }}
@@ -28,10 +29,11 @@
     </div>
   </div>
 {% endmacro %}
+</div>
 
 {% block admin_content %}
-  <div class="container-fluid to-show row">
-    {{ card_group(public_forms,  'Public Forms')  }}
+    <div class="d-flex p-2 bd-highlight row">
+      {{ card_group(public_forms,  'Public Forms')  }}
     {{ card_group(private_forms, 'Private Forms') }}
   </div>
 {% endblock %}

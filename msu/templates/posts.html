@@ -5,31 +5,33 @@ Posts
 {% endblock %}
 
 {% block admin_content %}
-  <div id="main" class="row container-fluid to-show">
-    <div class="card col-5 card-format">
-      <div class="card-header" id="card-header"><h2>Create post</h2></div>
+    <div id="main" class="d-flex row p-2 bd-highlight">
+        <div class="card card-format bd-highlight">
+            <div class="card-header" id="card-header"><h2>Create post</h2></div>
 
-      <div class="card-body col-sm-12">
-        <form method="POST" id="post-form" action="{{url_for('view.posts')}}" novalidate>
-          <div class="form-group">
-            <label for="title" class="label">Title</label>
-            <input type="text" class="form-control" name="subject" id="subject" required>
-          </div>
-
-          <div class="form-group">
-            <label for="editor" class="label">Body</label>
-            <textarea id="editor" name="body" required></textarea>
-          </div>
-          <input type="hidden" id="form_type" name="form_type" value="add">
-          <input type="submit" name="submit" value="Submit" class="btn btn-raised btn-primary">
-        </form>
-      </div>
-    </div>
-
-    <div class="card col-7 card-format">
-      <div class="card-header"><h2>Posts</h2></div>
-      <div class="card-body col-sm-12">
-        {% for p in posts %}
+            <div class="card-body col-sm-12">
+                <form method="POST" id="post-form" action="{{url_for('view.posts')}}" novalidate>
+                    <div class="form-group">
+                        <label for="title" class="label">Title</label>
+                        <input type="text" class="form-control" name="subject" id="subject" required>
+                    </div>
+                    <div class="form-group" id="form-main">
+                        <label for="editor" class="label">Body</label>
+                        <textarea id="editor" name="body" required></textarea>
+                    </div>
+                    <div class="form-group" id="form-sub" style="display: none">
+                        <label for="editor" class="label">Body</label>
+                        <textarea id="sub-edit" name="sub-edit" required></textarea>
+                    </div>
+                    <input type="hidden" id="form_type" name="form_type" value="add">
+                    <input type="submit" name="submit" value="Submit" class="btn btn-raised btn-primary">
+                </form>
+            </div>
+        </div>
+        <div class="card card-format flex-grow-1 bd-highlight">
+            <div class="card-header"><h2>Posts</h2></div>
+            <div class="card-body col-sm-12">
+              {% for p in posts %}
           <div class="col card card-format" id="loaded-posts">
             <h4 id="subject-{{p.id}}">{{ p.subject }}</h4>
             <div id="body-{{p.id}}"></div>

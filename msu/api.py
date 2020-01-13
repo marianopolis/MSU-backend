@@ -25,6 +25,8 @@ from flask import (
 from msu import db
 from msu.models import Post, File, Form, CongressMember
 from msu.events import get_events_data
+from msu.calendar import list_events
+import datetime
 
 bp = Blueprint('api', __name__)
 
@@ -165,3 +167,12 @@ def create_form():
 def get_files():
     files = File.query.order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
+
+
+@bp.route('/api/calendar', methods=['GET'])
+def get_cal_events():
+    events = list_events(
+        num=request.args.get('num'),
+        since=request.args.get('since'),
+    )
+    return {'data': events}
