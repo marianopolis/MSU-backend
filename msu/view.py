@@ -14,14 +14,29 @@ from flask import (
     abort,
     request,
     render_template,
+    current_app
 )
+
 from werkzeug import secure_filename
 
 from . import db
-from .models import Admin, Form, Post, File
+from .models import Admin, Form, Post, File, CongressMember
 
 bp = Blueprint('view', __name__)
 
+def check_file(request):
+    if 'file' not in request.files:
+            print("1")
+            flash('No file part')
+            return False
+
+    file = request.files['file']
+
+    if file.filename == '':
+        print("1")
+        flash('No file selected')
+        return False
+    return True
 
 def login_required(view):
     """View decorator to redirect anonymous users.
@@ -116,23 +131,65 @@ def posts():
     posts = Post.query.filter_by(archived=False).all()
     return render_template('posts.html', posts=posts)
 
+@bp.route('/congressmembers', methods=['GET', 'POST'])
+@login_required
+def congressmembers():
+    if request.method == 'POST':
+        
+        if not check_file(request):
+            return redirect(request.url)
+        
+        file = request.files['file']
+
+        form_type = request.form['form_type']
+
+        if form_type == 'add':
+            db.session.add(CongressMember(
+                name=request.form['name'],
+                title=request.form['title'],
+                key=secure_filename(file.filename),
+                data=file
+            ))
+            db.session.commit()
+
+        elif form_type == 'delete':
+            db.session.delete(CongressMember.query.get_or_404(
+                request.form['congressmember-id']
+            ))
+            db.session.commit()
+
+        elif form_type == 'edit':
+            congressmember = CongressMember.query.get_or_404(
+                request.form['congressmember-id']
+            )
+            congressmember.name = request.form['name']
+            congressmember.title = request.form['title']
+            db.session.commit()
+            print(congressmember.inserted_at, congressmember.updated_at)
+
+        elif form_type == 'archive':
+            congressmember = CongressMember.query.get_or_404(
+                request.form['congressmember-id']
+            )
+            congressmember.archived = True
+            db.session.commit()
+
+    congressmembers = CongressMember.query.filter_by(archived=False).all()
+    return render_template('congressmembers.html', congressmembers=congressmembers)
+
 
 @bp.route('/files', methods=['GET', 'POST'])
 @login_required
 def files():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
+        
+        if not check_file(request):
             return redirect(request.url)
 
         file = request.files['file']
 
-        if file.filename == '':
-            flash('No file selected')
-            return redirect(request.url)
-
         if File.query.filter_by(key=file.filename).first() is not None:
-            flash(f'File with name {file.filename} already exists')
+            flash('File with name {file.filename} already exists')
             return redirect(request.url)
 
         if file.filename:

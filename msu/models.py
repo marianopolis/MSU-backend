@@ -45,6 +45,36 @@ def hash_pwd(pwd, salt):
     """Return a hashed password."""
     return hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
 
+class CongressMember(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    key = db.Column(db.Text, nullable=False, index=True, unique=True)
+    url = db.Column(db.Text, nullable=False)
+    archived = db.Column(db.Boolean, nullable=False, default=False)
+    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                            server_default=func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                           server_default=func.now(),
+                           onupdate=func.now())
+
+    def __init__(self, name, title, key, data):
+        self.name = name  
+        self.title = title
+        self.key = key
+        self.url = files.upload_image(key, data)
+
+    @property
+    def version(self):
+        data = struct.pack('f', self.updated_at.timestamp())
+        return hashlib.sha1(data).hexdigest()
+
+    @validates('key', 'url')
+    def field_readonly(self, key, val):
+        if getattr(self, key) is not None:
+            raise ValueError(f'{key} is read-only')
+        return val
+
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
@@ -95,7 +125,7 @@ class File(db.Model):
     def __init__(self, key, desc, data):
         self.key = key
         self.desc = desc
-        self.url = files.upload(key, data)
+        self.url = files.upload_file(key, data)
 
     @validates('key', 'url')
     def field_readonly(self, key, val):

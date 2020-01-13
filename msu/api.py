@@ -23,7 +23,7 @@ from flask import (
 )
 
 from msu import db
-from msu.models import Post, File, Form
+from msu.models import Post, File, Form, CongressMember
 from msu.events import get_events_data
 
 bp = Blueprint('api', __name__)
@@ -32,7 +32,6 @@ def ensure_authorized():
     """Abort if user isn't an admin."""
     if g.admin_id is None:
         abort(403)
-
 
 # The json_* format the given objects into
 # dictionaries which are returned by the API
@@ -68,6 +67,19 @@ def json_file(file: File):
         'inserted_at': file.inserted_at,
         'updated_at': file.updated_at,
     }
+
+def json_congress_member(congressmember: CongressMember):
+    return {
+        'key': congressmember.key,
+        'name': congressmember.name,
+        'title': congressmember.title,
+        'url': congressmember.url,
+    }
+
+@bp.route('/api/congressmembers', methods=['GET'])
+def get_congressmembers():
+    congressmembers = CongressMember.query.order_by(CongressMember.inserted_at.asc()).all()
+    return {'data': [json_congress_member(c) for c in congressmembers]}
 
 @bp.route('/api/events', methods=['GET'])
 def get_events():
