@@ -25,7 +25,7 @@ from flask import (
 from msu import db
 from msu.models import Post, File, Form, CongressMember
 from msu.events import get_events_data
-from msu.calendar import build_service
+from msu.calendar import list_events
 import datetime
 
 bp = Blueprint('api', __name__)
@@ -169,58 +169,10 @@ def get_files():
     return {'data': [json_file(f) for f in files]}
 
 
-# Calendar Events
-
-@bp.route('/api/calendar', defaults={'num': 10, 'time': datetime.datetime.utcnow().isoformat() + 'Z'}, methods=['GET'])
-@bp.route('/api/calendar/<int:num>/<string:time>', methods=['GET'])
-def get_cal_events(num, time):
-    """Getting the upcoming 10 events"""
-    # check_authorized()
-    service = build_service()
-    events_result = service.events().list(calendarId='primary', timeMin=time,
-                                          maxResults=num, singleEvents=True,
-                                          orderBy='startTime').execute()
-    events = events_result.get('items', [])
-    if not events: return 'No upcoming events found.'
-    return {'data': [event for event in events]}
-
-
-@bp.route('/api/calendar', methods=['POST'])
-def create_cal_event():
-    check_authorized()
-    service = build_service()
-    event = {
-        'summary': request.form.get('summary'),
-        'location': request.form.get('location'),
-        'description': request.form.get('description'),
-        'start': {
-            'dateTime': request.form.get('startTime'),
-            'timeZone': 'Canada/Montreal',
-        },
-        'end': {
-            'dateTime': request.form.get('endTime'),
-            'timeZone': 'Canada/Montreal',
-        },
-        'reminders': {
-            'useDefault': True,
-        },
-    }
-
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    return '', 201
-
-
-@bp.route('/api/calendar/<int:id>', methods=['PUT', 'PATCH'])
-def update_cal_event(id):
-    check_authorized()
-    abort(501)
-
-
-@bp.route('/api/calendar/<string:id>', methods=['DELETE'])
-def delete_cal_event(id):
-    check_authorized()
-    service = build_service()
-    service.events().delete(
-        calendarId=current_app.config["mstudentunioncongress@gmail.com"],
-        eventId=id).execute()
-    return '', 204
+@bp.route('/api/calendar', methods=['GET'])
+def get_cal_events():
+    events = list_events(
+        num=request.args.get('num'),
+        since=request.args.get('since'),
+    )
+    return {'data': events}
