@@ -24,7 +24,6 @@ from flask import (
 
 from msu import db
 from msu.models import Post, File, Form, CongressMember
-from msu.events import get_events_data
 from msu.calendar import list_events
 import datetime
 
@@ -82,17 +81,6 @@ def json_congress_member(congressmember: CongressMember):
 def get_congressmembers():
     congressmembers = CongressMember.query.order_by(CongressMember.inserted_at.asc()).all()
     return {'data': [json_congress_member(c) for c in congressmembers]}
-
-@bp.route('/api/events', methods=['GET'])
-def get_events():
-    group_id = current_app.config['FB_GROUP_ID']
-    access_tok = current_app.config['FB_ACCESS_TOKEN']
-
-    if group_id is None or access_tok is None:
-        return '', 503
-
-    data = get_events_data(group_id, access_tok)
-    return {'data': data}
 
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
