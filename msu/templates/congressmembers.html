@@ -37,7 +37,7 @@ Congress Members
           <div class="col card card-format" id="loaded-posts">
             <h4 id="name-{{c.id}}">{{ c.name }}</h4>
             <div id="title-{{c.id}}">{{ c.title }}</div>
-            <img id="image-{{c.id}}" src="{{c.url}}" alt={{c.name}} class="congress-image"/>
+            <img id="image-{{c.id}}" src="{{c.url}}" alt={{c.name}} class="congress-image" height = "150px"/>
             <p id="insert-{{c.id}}">{{ c.inserted_at }}</p>
             <form method="POST" action="{{url_for('view.congressmembers')}}" class="archive-form">
               <input type="hidden" name="form_type" value="archive">
