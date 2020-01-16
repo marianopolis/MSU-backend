@@ -138,15 +138,16 @@ def posts():
 @login_required
 def congressmembers():
     if request.method == 'POST':
-        
-        if not check_file(request):
-            return redirect(request.url)
-        
-        file = request.files['file']
 
         form_type = request.form['form_type']
 
         if form_type == 'add':
+
+            if not check_file(request):
+                return redirect(request.url)
+        
+            file = request.files['file']
+            
             db.session.add(CongressMember(
                 name=request.form['name'],
                 title=request.form['title'],
@@ -156,6 +157,7 @@ def congressmembers():
             db.session.commit()
 
         elif form_type == 'delete':
+
             db.session.delete(CongressMember.query.get_or_404(
                 request.form['congressmember-id']
             ))
