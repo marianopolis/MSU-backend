@@ -147,7 +147,7 @@ def congressmembers():
                 return redirect(request.url)
         
             file = request.files['file']
-            
+
             db.session.add(CongressMember(
                 name=request.form['name'],
                 title=request.form['title'],
@@ -163,14 +163,14 @@ def congressmembers():
             ))
             db.session.commit()
 
-        elif form_type == 'edit':
-            congressmember = CongressMember.query.get_or_404(
-                request.form['congressmember-id']
-            )
-            congressmember.name = request.form['name']
-            congressmember.title = request.form['title']
-            db.session.commit()
-            print(congressmember.inserted_at, congressmember.updated_at)
+        # elif form_type == 'edit':
+        #     congressmember = CongressMember.query.get_or_404(
+        #         request.form['congressmember-id']
+        #     )
+        #     congressmember.name = request.form['name']
+        #     congressmember.title = request.form['title']
+        #     db.session.commit()
+        #     print(congressmember.inserted_at, congressmember.updated_at)
 
         elif form_type == 'archive':
             congressmember = CongressMember.query.get_or_404(
