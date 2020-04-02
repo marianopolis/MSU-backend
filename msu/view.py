@@ -20,7 +20,7 @@ from flask import (
 from werkzeug import secure_filename
 
 from . import db
-from .models import Admin, Form, Post, File, CongressMember
+from .models import Admin, Form, Post, File, Link, CongressMember
 
 bp = Blueprint('view', __name__)
 
@@ -206,6 +206,26 @@ def files():
 
     files = File.query.all()
     return render_template('files.html', files=files)
+
+@bp.route('/links', methods=['GET', 'POST'])
+@login_required
+def links():
+    if request.method == 'POST':
+        form_type = request.form['form_type']
+
+        if form_type == 'add':
+            db.session.add(Link(
+                desc=request.form['desc'],
+                url=request.form['url'],
+            ))
+        elif form_type == 'delete':
+            db.session.delete(Link.query.get_or_404(
+                request.form['link-id']
+            ))
+
+        db.session.commit()
+    links = Link.query.all()
+    return render_template('links.html', links=links)
 
 
 @bp.route('/forms', methods=['GET', 'POST'])

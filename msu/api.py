@@ -23,7 +23,7 @@ from flask import (
 )
 
 from msu import db
-from msu.models import Post, File, Form, CongressMember
+from msu.models import Post, File, Link, Form, CongressMember
 from msu.events import get_events_data
 from msu.calendar import list_events
 import datetime
@@ -68,6 +68,14 @@ def json_file(file: File):
         'url': file.url,
         'inserted_at': file.inserted_at,
         'updated_at': file.updated_at,
+    }
+
+def json_link(link: Link):
+    return {
+        'desc': link.desc,
+        'url': link.url,
+        'inserted_at': link.inserted_at,
+        'updated_at': link.updated_at,
     }
 
 def json_congress_member(congressmember: CongressMember):
@@ -168,6 +176,19 @@ def get_files():
     files = File.query.order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
 
+@bp.route('/api/links', methods=['GET'])
+def get_links():
+    links = Link.query.order_by(Link.desc.asc()).all()
+    return {'data': [json_link(f) for f in links]}
+
+# union of files and links
+@bp.route('/api/resources', methods=['GET'])
+def get_resources():
+    files = map(json_file, File.query.all())
+    links = map(json_link, Link.query.all())
+    r = list(files) + list(links)
+    r.sort(key=(lambda x: x['updated_at']), reverse=True)
+    return {'data': r}
 
 @bp.route('/api/calendar', methods=['GET'])
 def get_cal_events():

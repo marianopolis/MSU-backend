@@ -111,6 +111,16 @@ class Post(db.Model):
                             server_default=func.now(),
                             onupdate=func.now())
 
+class Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    desc = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text, nullable=False)
+    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                            server_default=func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                           server_default=func.now(),
+                           onupdate=func.now())
+
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     desc = db.Column(db.Text, nullable=False)
