@@ -17,7 +17,7 @@ from flask import (
     current_app
 )
 
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
 from . import db
 from .models import Admin, Form, Post, File, Link, CongressMember
