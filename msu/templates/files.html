@@ -13,7 +13,7 @@ Files
           <div class="alert alert-danger" role="alert">{{msg}}</div> 
         {% endfor %}
         <form enctype="multipart/form-data" method="post">
-          <input type="hidden" value="add" id="form_type" name="form_type">
+          <input type="hidden" value="add" name="form_type">
           <div class="form-group">
             <label for="file" class="label">File</label>
             <input type="file" name="file" id="file" required>
@@ -35,8 +35,16 @@ Files
             <div class="col card card-format" id="loaded-files">
               <div class="card-header">{{row.key}}</div>
               <div class="card-body">
+                <h1>{{row.desc}}</h1>
                 <p>{{row.inserted_at}}</p>
-                <a href="{{row.url}}" download="{{row.url}}">Download</a>
+                <div class="row">
+                  <a href="{{row.url}}">Download</a>
+                  <form method="POST" action="{{url_for('view.files')}}" class="delete-form">
+                    <input type="hidden" name="form_type" value="delete">
+                    <input type="hidden" name="id" value="{{row.id}}">
+                    <input type="submit" name="submit" value="Delete" class="btn btn-raised btn-danger">
+                  </form>
+                </div>
               </div>
             </div>
           {% else %}

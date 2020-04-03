@@ -35,6 +35,7 @@ import secrets
 import hashlib
 import struct
 
+from sqlalchemy import event
 from sqlalchemy.orm import validates
 from sqlalchemy.sql import func
 
@@ -142,6 +143,10 @@ class File(db.Model):
         if getattr(self, key) is not None:
             raise ValueError(f'{key} is read-only')
         return val
+
+@event.listens_for(File, 'before_delete')
+def delete_file(mapper, conn, target):
+    files.delete_file(target.key)
 
 class Form(db.Model):
     id = db.Column(db.Integer, primary_key=True)

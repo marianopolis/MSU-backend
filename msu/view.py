@@ -110,24 +110,16 @@ def posts():
                 body=request.form['body'],
                 admin_id=session['admin_id'],
             ))
-        elif form_type == 'delete':
-            db.session.delete(Post.query.get_or_404(
-                request.form['post-id']
-            ))
-        elif form_type == 'edit':
-            post = Post.query.get_or_404(
-                request.form['post-id']
-            )
-            post.subject = request.form['subject']
-            post.body = request.form['sub-edit']
-            db.session.commit()
-            print(post.inserted_at, post.updated_at)
+        else:
+            post = Post.query.get_or_404(request.form['post-id'])
 
-        elif form_type == 'archive':
-            post = Post.query.get_or_404(
-                request.form['post-id']
-            )
-            post.archived = True
+            if form_type == 'delete':
+                db.session.delete(post)
+            elif form_type == 'edit':
+                post.subject = request.form['subject']
+                post.body = request.form['sub-edit']
+            elif form_type == 'archive':
+                post.archived = True
 
         db.session.commit()
 
@@ -143,7 +135,6 @@ def congressmembers():
             return redirect(request.url)
         
         file = request.files['file']
-
         form_type = request.form['form_type']
 
         if form_type == 'add':
@@ -155,26 +146,19 @@ def congressmembers():
             ))
             db.session.commit()
 
-        elif form_type == 'delete':
-            db.session.delete(CongressMember.query.get_or_404(
-                request.form['congressmember-id']
-            ))
-            db.session.commit()
-
-        elif form_type == 'edit':
-            congressmember = CongressMember.query.get_or_404(
+        else:
+            member = CongressMember.query.get_or_404(
                 request.form['congressmember-id']
             )
-            congressmember.name = request.form['name']
-            congressmember.title = request.form['title']
-            db.session.commit()
-            print(congressmember.inserted_at, congressmember.updated_at)
 
-        elif form_type == 'archive':
-            congressmember = CongressMember.query.get_or_404(
-                request.form['congressmember-id']
-            )
-            congressmember.archived = True
+            if form_type == 'delete':
+                db.session.delete(member)
+            elif form_type == 'edit':
+                member.name = request.form['name']
+                member.title = request.form['title']
+            elif form_type == 'archive':
+                member.archived = True
+
             db.session.commit()
 
     congressmembers = CongressMember.query.filter_by(archived=False).all()
@@ -186,23 +170,30 @@ def congressmembers():
 def files():
     if request.method == 'POST':
         
-        if not check_file(request):
-            return redirect(request.url)
+        form_type = request.form['form_type']
+        if form_type == 'add':
+            if not check_file(request):
+                return redirect(request.url)
 
-        file = request.files['file']
+            file = request.files['file']
 
-        if File.query.filter_by(key=file.filename).first() is not None:
-            flash('File with name {file.filename} already exists')
-            return redirect(request.url)
+            if File.query.filter_by(key=file.filename).first() is not None:
+                flash('File with name {file.filename} already exists')
+                return redirect(request.url)
 
-        if file.filename:
-            db.session.add(File(
-                key=secure_filename(file.filename),
-                desc=request.form['desc'],
-                data=file,
-            ))
+            if file.filename:
+                db.session.add(File(
+                    key=secure_filename(file.filename),
+                    desc=request.form['desc'],
+                    data=file,
+                ))
+                db.session.commit()
+                flash('success')
+
+        elif form_type == 'delete':
+            file = File.query.get_or_404(request.form['id'])
+            db.session.delete(file)
             db.session.commit()
-            flash('success')
 
     files = File.query.all()
     return render_template('files.html', files=files)

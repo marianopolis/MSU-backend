@@ -35,7 +35,11 @@ def _upload(key, data, bucket):
 
 def upload_file(key, data):
     bucket = current_app.config['S3_BUCKET_FILES']
-    return _upload(key, data, bucket )
+    return _upload(key, data, bucket)
+
+def delete_file(key):
+    bucket = current_app.config['S3_BUCKET_FILES']
+    s3_client.delete_object(Bucket=bucket, Key=key)
 
 def upload_image(key,data):
     bucket = current_app.config['S3_BUCKET_IMAGES']
