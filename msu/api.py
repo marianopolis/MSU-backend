@@ -104,7 +104,10 @@ def get_events():
 
 @bp.route('/api/posts', methods=['GET'])
 def get_posts():
-    posts = Post.query.order_by(Post.inserted_at.desc()).all()
+    posts = Post.query \
+        .filter(Post.archived == False) \
+        .order_by(Post.inserted_at.desc()) \
+        .all()
     return {'data': [json_post(p) for p in posts]}
 
 @bp.route('/api/posts/<int:id>', methods=['GET'])
