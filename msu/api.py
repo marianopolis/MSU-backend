@@ -30,11 +30,6 @@ import datetime
 
 bp = Blueprint('api', __name__)
 
-def ensure_authorized():
-    """Abort if user isn't an admin."""
-    if g.admin_id is None:
-        abort(403)
-
 # The json_* format the given objects into
 # dictionaries which are returned by the API
 # as JSON data.
@@ -109,55 +104,6 @@ def get_posts():
         .order_by(Post.inserted_at.desc()) \
         .all()
     return {'data': [json_post(p) for p in posts]}
-
-@bp.route('/api/posts/<int:id>', methods=['GET'])
-def get_post(id):
-    p = Post.query.get_or_404(id)
-    return {'data': json_post(p)}
-
-@bp.route('/api/posts', methods=['POST'])
-def create_post():
-    ensure_authorized()
-    post = Post(
-        subject=request.form['subject'],
-        body=request.form['body'],
-        admin_id=session['admin_id'],
-    )
-    db.session.add(post)
-    db.session.flush()
-
-    return {'data': json_post(post)}, 201
-
-# NOTE: CURRENTLY UNIMPLEMENTED
-@bp.route('/api/posts/<int:id>', methods=['PUT', 'PATCH'])
-def update_post(id):
-    abort(501)
-
-@bp.route('/api/posts/<int:id>', methods=['DELETE'])
-def delete_post(id):
-    ensure_authorized()
-    p = Post.query.get_or_404(id)
-    db.session.delete(p)
-    db.session.commit()
-    return '', 204
-
-
-@bp.route('/api/forms', methods=['GET'])
-def get_forms():
-    ensure_authorized()
-
-    forms = None
-    private = request.args.get('private')
-    if private is None:
-        forms = Form.query.all()
-    elif private == 'true':
-        forms = Form.query.filter_by(private=True).all()
-    elif private == 'false':
-        forms = Form.query.filter_by(private=False).all()
-    else:
-        abort(400)
-
-    return {'data': [json_form(f) for f in forms]}
 
 @bp.route('/api/forms', methods=['POST'])
 def create_form():
