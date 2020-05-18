@@ -10,7 +10,6 @@ from flask import Flask
 from flask.json import JSONEncoder
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_simplemde import SimpleMDE
 
 from config import configs
 
@@ -31,7 +30,6 @@ class CustomJSONEncoder(JSONEncoder):
 
 db = SQLAlchemy()
 migrate = Migrate()
-simplemde = SimpleMDE()
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -46,10 +44,14 @@ def create_app(testing=False):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    simplemde.init_app(app)
 
     from . import api, view
     app.register_blueprint(api.bp)
     app.register_blueprint(view.bp)
+
+    # Custom jinja2 filter used in templates to format dates
+    @app.template_filter('datetime')
+    def format_datetime(d: datetime):
+        return d.strftime('%H:%M %d %b %Y')
 
     return app

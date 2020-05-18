@@ -1,0 +1,56 @@
+{% extends 'layout/admin.html' %}
+
+{% block title %}Congress Members{% endblock %}
+
+{% block content %}
+  <div>
+    <form enctype="multipart/form-data" method="POST" action="{{ request.path }}">
+      <div>
+        <label for="name" class="label">Name</label>
+        <input type="text" class="form-control" name="name" id="name" required>
+      </div>
+      <div>
+        <label for="title-editor" class="label">Title</label>
+        <input type="text" class="form-control" name="title" id="title" required>
+      </div>
+      <div>
+        <label for="file" class="label">Image</label>
+        </br>
+        <input type="file" id="file" name="file" required></input>
+      </div>
+      <input type="hidden" name="type" value="create">
+      <input type="submit" name="submit" value="Submit" class="btn btn-raised btn-primary">
+    </form>
+
+    {% for msg in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">{{msg}}</div> 
+    {% endfor %}
+  </div>
+
+  <div>
+    {% for c in congressmembers %}
+      <div class="card">
+        <div class="avatar">
+          <div class="img-container">
+            <img src="{{c.url}}" alt="{{c.name}}" />
+          </div>
+
+          <div>
+            <h4>{{ c.name }}</h4>
+            <p><strong>{{ c.title }}</strong></p>
+          </div>
+
+          <form method="POST" action="{{ request.path }}">
+            <input type="hidden" name="type" value="delete">
+            <input type="hidden" name="id" value="{{ c.id }}">
+            <button type="submit" name="submit" class="btn btn-raised btn-danger">
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div>No congress members uploaded.</div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -81,8 +81,8 @@ def json_congress_member(congressmember: CongressMember):
         'url': congressmember.url,
     }
 
-@bp.route('/api/congressmembers', methods=['GET'])
-def get_congressmembers():
+@bp.route('/api/congress', methods=['GET'])
+def get_congress():
     congressmembers = CongressMember.query.order_by(CongressMember.inserted_at.asc()).all()
     return {'data': [json_congress_member(c) for c in congressmembers]}
 

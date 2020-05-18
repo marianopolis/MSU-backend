@@ -1,0 +1,33 @@
+{% extends 'layout/base.html' %}
+
+{% block body %}
+  <div id="admin-content">
+    <header>
+      <nav>
+        {% macro navlink(name, route) %}
+          <li>
+            <a class="{{ 'selected' if route == request.path }}"
+               href='{{ route }}'>
+              {{ name }}
+            </a>
+          </li>
+        {% endmacro %}
+
+        <ul>
+          {{ navlink('posts', url_for('view.posts')) }}
+          {{ navlink('forms', url_for('view.forms')) }}
+          {{ navlink('files', url_for('view.files')) }}
+          {{ navlink('links', url_for('view.links')) }}
+          {{ navlink('congress', url_for('view.congress')) }}
+        </ul>
+        <ul>
+          {{ navlink('logout', url_for('view.logout')) }}
+        </ul>
+      </nav>
+    </header>
+
+    <div>
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+{% endblock %}

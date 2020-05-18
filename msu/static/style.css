@@ -1,0 +1,139 @@
+html {
+  margin: 0;
+  left: 0;
+  right: 0;
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+  font-size: 1em;
+}
+body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+button {
+  min-width: 4.5rem;
+  width: auto;
+}
+.hidden {
+  display: none;
+}
+div {
+  overflow: visible;
+}
+nav {
+  display: flex !important;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+nav ul {
+  list-style-type: none;
+  margin: 0 -.25rem;
+  padding: 0;
+}
+nav ul li {
+  display: inline-block;
+  padding: 0 .25rem;
+}
+nav ul li a {
+  color: #666;
+}
+nav ul li a.selected {
+  color: #0069d9;
+  font-weight: bold;
+}
+#login {
+  margin-top: 50px;
+  width: 400px;
+}
+#login img {
+  margin: 40px auto;
+  margin-left: 50px;
+  width: 300px;
+  height: auto;
+}
+#admin-content {
+  width: 85rem;
+  max-width: 85rem;
+  max-height: 100vh;
+  margin: 0 2rem;
+  display: grid;
+  grid-template-rows: 4rem calc(100vh - 4rem);
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "body";
+}
+#admin-content > header {
+  grid-area: header;
+  display: grid;
+  align-items: center;
+  justify-self: center;
+  width: 100%;
+}
+#admin-content > div {
+  grid-area: body;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+#admin-content > div > :nth-child(1) {
+  margin-right: .5rem;
+  flex: 2;
+}
+#admin-content > div > :nth-child(2) {
+  margin-left: .5rem;
+  overflow: auto;
+  flex: 3;
+}
+#admin-content > div > div.forms {
+  flex: 1;
+  overflow: auto;
+}
+form > div {
+  margin-bottom: 1.5rem;
+}
+.card {
+  overflow: auto;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  display: block !important;
+  background: #fff;
+}
+.card.selected {
+  background: #ddd;
+}
+.card button {
+  float: right;
+  margin-top: 2px;
+  margin-right: .2rem;
+}
+div.avatar {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: start;
+}
+div.avatar .img-container {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+div.avatar form {
+  align-self: flex-end;
+  margin-left: auto;
+}
+div.avatar img {
+  height: 100%;
+}
+div.avatar h4 {
+  margin-bottom: 0;
+}

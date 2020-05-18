@@ -26,16 +26,15 @@ bp = Blueprint('view', __name__)
 
 def check_file(request):
     if 'file' not in request.files:
-            print("1")
-            flash('No file part')
-            return False
+        flash('No file part')
+        return False
 
     file = request.files['file']
 
     if file.filename == '':
-        print("1")
         flash('No file selected')
         return False
+
     return True
 
 def login_required(view):
@@ -102,42 +101,45 @@ def login():
 def posts():
     if request.method == 'POST':
 
-        form_type = request.form['form_type']
+        form_type = request.form['type']
 
-        if form_type == 'add':
+        if form_type == 'create':
             db.session.add(Post(
                 subject=request.form['subject'],
                 body=request.form['body'],
                 admin_id=session['admin_id'],
             ))
         else:
-            post = Post.query.get_or_404(request.form['post-id'])
+            post = Post.query.get_or_404(request.form['id'])
 
-            if form_type == 'delete':
-                db.session.delete(post)
-            elif form_type == 'edit':
-                post.subject = request.form['subject']
-                post.body = request.form['sub-edit']
-            elif form_type == 'archive':
+            if form_type == 'archive':
                 post.archived = True
+            elif form_type == 'update':
+                post.subject = request.form['subject']
+                post.body = request.form['body']
 
         db.session.commit()
 
-    posts = Post.query.filter_by(archived=False).all()
+    posts = Post.query \
+        .filter_by(archived=False) \
+        .order_by(Post.inserted_at.desc()) \
+        .all()
+
     return render_template('posts.html', posts=posts)
 
-@bp.route('/congressmembers', methods=['GET', 'POST'])
-@login_required
-def congressmembers():
-    if request.method == 'POST':
-        
-        if not check_file(request):
-            return redirect(request.url)
-        
-        file = request.files['file']
-        form_type = request.form['form_type']
 
-        if form_type == 'add':
+@bp.route('/congress', methods=['GET', 'POST'])
+@login_required
+def congress():
+    if request.method == 'POST':
+
+        form_type = request.form['type']
+        if form_type == 'create':
+            if not check_file(request):
+                return redirect(request.url)
+            
+            file = request.files['file']
+
             db.session.add(CongressMember(
                 name=request.form['name'],
                 title=request.form['title'],
@@ -146,23 +148,15 @@ def congressmembers():
             ))
             db.session.commit()
 
-        else:
+        elif form_type == 'delete':
             member = CongressMember.query.get_or_404(
-                request.form['congressmember-id']
+                request.form['id']
             )
-
-            if form_type == 'delete':
-                db.session.delete(member)
-            elif form_type == 'edit':
-                member.name = request.form['name']
-                member.title = request.form['title']
-            elif form_type == 'archive':
-                member.archived = True
-
+            db.session.delete(member)
             db.session.commit()
 
     congressmembers = CongressMember.query.filter_by(archived=False).all()
-    return render_template('congressmembers.html', congressmembers=congressmembers)
+    return render_template('congress.html', congressmembers=congressmembers)
 
 
 @bp.route('/files', methods=['GET', 'POST'])
@@ -170,8 +164,8 @@ def congressmembers():
 def files():
     if request.method == 'POST':
         
-        form_type = request.form['form_type']
-        if form_type == 'add':
+        form_type = request.form['type']
+        if form_type == 'create':
             if not check_file(request):
                 return redirect(request.url)
 
@@ -188,7 +182,6 @@ def files():
                     data=file,
                 ))
                 db.session.commit()
-                flash('success')
 
         elif form_type == 'delete':
             file = File.query.get_or_404(request.form['id'])
@@ -198,20 +191,21 @@ def files():
     files = File.query.all()
     return render_template('files.html', files=files)
 
+
 @bp.route('/links', methods=['GET', 'POST'])
 @login_required
 def links():
     if request.method == 'POST':
-        form_type = request.form['form_type']
+        form_type = request.form['type']
 
-        if form_type == 'add':
+        if form_type == 'create':
             db.session.add(Link(
                 desc=request.form['desc'],
                 url=request.form['url'],
             ))
         elif form_type == 'delete':
             db.session.delete(Link.query.get_or_404(
-                request.form['link-id']
+                request.form['id']
             ))
 
         db.session.commit()
@@ -224,7 +218,7 @@ def links():
 def forms():
     if request.method == 'POST':
         db.session.delete(Form.query.get_or_404(
-            request.form['form-id']
+            request.form['id']
         ))
         db.session.commit()
 

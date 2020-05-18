@@ -1,56 +1,43 @@
-{% extends 'layout/base_admin.html' %}
+{% extends 'layout/admin.html' %}
 
-{% block title %}
-Files
-{% endblock %}
+{% block title %}Files{% endblock %}
 
-{% block admin_content %}
-  <div class="d-flex p-2 row bd-highlight">
-    <div class="card card-format bd-highlight">
-      <div class="card-header"><h2>Upload a document</h2></div>
-      <div class="card-body col-sm-12">
-        {% for msg in get_flashed_messages() %}
-          <div class="alert alert-danger" role="alert">{{msg}}</div> 
-        {% endfor %}
-        <form enctype="multipart/form-data" method="post">
-          <input type="hidden" value="add" name="form_type">
-          <div class="form-group">
-            <label for="file" class="label">File</label>
-            <input type="file" name="file" id="file" required>
-          </div>
+{% block content %}
+  <div>
+    <form enctype="multipart/form-data" method="POST">
+      <div>
+        <label for="desc" class="label">Name</label>
+        <input type="text" class="form-control" name="desc" id="desc" required>
+      </div>
+      <div>
+        <label for="file" class="label">File</label>
+        </br>
+        <input type="file" name="file" id="file" required>
+      </div>
+      <input type="hidden" name="type" value="create">
+      <input type="submit" class="btn btn-raised btn-primary" value="Submit">
+    </form>
 
-          <div class="form-group">
-            <label for="desc" class="label">Name</label>
-            <input type="text" class="form-control" name="desc" id="desc" required>
-          </div>
-
-          <input type="submit" class="btn btn-raised btn-primary" value="Submit">
+    {% for msg in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">{{msg}}</div> 
+    {% endfor %}
+  </div>
+  <div>
+    {% for row in files %}
+      <div class="card">
+        <h4>{{row.desc}}</h1>
+        <p>{{ row.inserted_at | datetime }}</p>
+        <a href="{{ row.url }}">{{ row.key }}</a>
+        <form method="POST" action="{{ request.path }}">
+          <input type="hidden" name="type" value="delete">
+          <input type="hidden" name="id" value="{{ row.id }}">
+          <button type="submit" name="submit" class="btn btn-raised btn-danger">
+            Delete
+          </button>
         </form>
       </div>
-    </div>
-    <div class="card card-format flex-grow-1 bd-highlight">
-      <div class="card-header"><h2>Uploaded documents</h2></div>
-      <div class="card-body col-sm-12">
-        {% for row in files %}
-            <div class="col card card-format" id="loaded-files">
-              <div class="card-header">{{row.key}}</div>
-              <div class="card-body">
-                <h1>{{row.desc}}</h1>
-                <p>{{row.inserted_at}}</p>
-                <div class="row">
-                  <a href="{{row.url}}">Download</a>
-                  <form method="POST" action="{{url_for('view.files')}}" class="delete-form">
-                    <input type="hidden" name="form_type" value="delete">
-                    <input type="hidden" name="id" value="{{row.id}}">
-                    <input type="submit" name="submit" value="Delete" class="btn btn-raised btn-danger">
-                  </form>
-                </div>
-              </div>
-            </div>
-          {% else %}
-            <div>No files were found in the database.</div>
-          {% endfor %}
-      </div>
-    </div>
+    {% else %}
+      <div>No files uploaded.</div>
+    {% endfor %}
   </div>
 {% endblock %}

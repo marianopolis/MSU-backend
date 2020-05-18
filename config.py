@@ -7,8 +7,6 @@ class Config(object):
     SECRET_KEY = 'msu'
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/msu'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SIMPLEMDE_JS_IIFE = True
-    SIMPLEMDE_USE_CDN = True
 
     # For use in file handling. See msu/files.py.
     S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')

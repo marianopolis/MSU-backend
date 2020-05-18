@@ -1,39 +1,34 @@
-{% extends 'layout/base_admin.html' %}
+{% extends 'layout/admin.html' %}
 
 {% block title %}Forms{% endblock %}
 
-<div class="d-flex p-2 bd-highlight">
 {% macro form_card(row) %}
-    <div class="card card-format bd-highlight flex-fill" id="loaded-posts">
-        <p id="form-title">{{ row.name }}</p>
-    <p id="form-time">{{ row.inserted_at }}</p>
-    <hr>
-    <h4>{{row.subject}}</h4>
-    <p>{{ row.body }}</p>
-    <form method="POST" action="{{url_for('view.forms')}}" class="delete-form">
-      <input type="hidden" name="form-id" value="{{row.id}}">
-      <input type="submit" name="submit" value="Delete" class="btn btn-raised btn-danger">
-    </form>
-  </div>
+<div class="card">
+  <h4>{{row.subject}}</h4>
+  <p>{{ row.name }}<br>{{ row.inserted_at | datetime }}</p>
+  <hr>
+  <p>{{ row.body }}</p>
+  <form method="POST" action="{{ request.path }}" class="delete-form">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <button type="submit" name="submit" class="btn btn-raised btn-danger">
+      Delete
+    </button>
+  </form>
+</div>
 {% endmacro %}
 
 {% macro card_group(rows, head) %}
-    <div class="card card-format bd-highlight flex-fill">
-        <div class="card-header"><h2>{{ head }}</h2></div>
-    <div class="card-body col-sm-12">
-      {% for row in rows %}
-        {{ form_card(row) }}
-      {% else %}
-        <div>No forms were found in the database.</div>
-      {% endfor %}
-    </div>
+  <div class="forms">
+    <h3>{{ head }}</h3>
+    {% for row in rows %}
+      {{ form_card(row) }}
+    {% else %}
+      <div>No forms submitted.</div>
+    {% endfor %}
   </div>
 {% endmacro %}
-</div>
 
-{% block admin_content %}
-    <div class="d-flex p-2 bd-highlight row">
-      {{ card_group(public_forms,  'Public Forms')  }}
-    {{ card_group(private_forms, 'Private Forms') }}
-  </div>
+{% block content %}
+  {{ card_group(public_forms,  'Public')  }}
+  {{ card_group(private_forms, 'Private') }}
 {% endblock %}

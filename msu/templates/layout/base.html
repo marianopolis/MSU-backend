@@ -2,89 +2,75 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <title>{% block title %}{% endblock %} - MSU</title>
-    <link rel="shortcut icon" href="{{url_for('static', filename='appIcon.png')}}">
+
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
 
     <!-- Bootstrap CSS -->
-    <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons"
-    />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Marked -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- SimpleMDE -->
-    {{ simplemde.css }}
-    {{ simplemde.js }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
   </head>
 
-  <style>
-    .body-format {
-      background-color: #f2f2f2; 
-      font-family: 'Trebuchet MS', Helvetica, sans-serif;
-    }
-    .card-format {
-      overflow: auto;
-    }
-    .logo {
-      margin: 40px auto;
-    }
-    .row {
-      margin: 0 auto;
-      min-height: 90vh;
-    }
-    .form-container {
-      margin: auto;
-      margin-top: 2%;
-    }
-    .form-group {
-      margin: auto;
-      padding: 15px;
-    }
-    #loaded-posts {
-      padding: 20px;
-      display: block;
-      margin-bottom: 15px;
-    }
-    #loaded-files {
-      margin-bottom: 15px;
-    }
-    #form-title {
-      display: inline;
-      font-size: 20px;
-    }
-    #form-time {
-      font-size: 15px;
-      display: inline;
-      float: right;
-      text-align: right;
-    }
-    .archive-form {
-      float: right;
-      width: auto;
-      padding: 10px;
-      margin-bottom: 0px;
-    }
-    .delete-form {
-      float: right;
-      width: auto;
-      padding: 10px;
-      margin-bottom: 0px;
-    }
-    .edit-button {
-      float: left;
-      width: auto;
-      padding: 10px;
-      margin-bottom: 0px;
-    }
-  </style>
-
-  <body class="body-format">
-    <header>{% block header %}{% endblock %}</header>
-
-    {% block content %}{% endblock %}
+  <body>
+    {% block body %}{% endblock %}
   </body>
+
+  <script type="text/javascript">
+    // Render markdown for elements with markdown class
+    for (let e of document.querySelectorAll('.markdown')) {
+      e.innerHTML = marked(e.innerText);
+    }
+
+    // Create markdown editors. The first one is for creating,
+    // and the second one is used when editing.
+    let mdeMain = new SimpleMDE({ element: document.querySelector('#form-main .editor') });
+    let mdeEdit = new SimpleMDE({ element: document.querySelector('#form-edit .editor') });
+
+    // Following code used for editing
+
+    function startEdit() {
+      document.getElementById('form-main').classList.add('hidden');
+      document.getElementById('form-edit').classList.remove('hidden');
+    }
+
+    function stopEdit() {
+      document.getElementById('form-main').classList.remove('hidden');
+      document.getElementById('form-edit').classList.add('hidden');
+    }
+
+    let id = null;
+    function startEditPost(_id) {
+      if (id !== null) {
+        stopEditPost();
+      }
+
+      id = _id;
+
+      let card = document.getElementById(`post-${id}`);
+      let title = card.querySelector('.title').innerText;
+      let body = card.querySelector('.body').innerText;
+
+      startEdit();
+
+      card.classList.add('selected');
+      document.querySelector('#form-edit .title').value = title;
+      document.querySelector('#form-edit .id').value = id;
+      mdeEdit.value(body);
+    }
+
+    function stopEditPost() {
+      document.getElementById(`post-${id}`).classList.remove('selected');
+      stopEdit();
+      id = null;
+    }
+  </script>
 </html>
