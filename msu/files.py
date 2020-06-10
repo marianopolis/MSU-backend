@@ -10,6 +10,9 @@ Additionally, ensure the relevant environment variables in `config.py`
 are set.
 """
 
+import pathlib
+import time
+
 from urllib import parse
 import boto3
 
@@ -31,16 +34,19 @@ def _upload(key, data, bucket):
     constraint = s3_client.get_bucket_location(Bucket=bucket)['LocationConstraint']
     s3_client.upload_fileobj(data, bucket, key)
 
-    return _url(bucket, constraint, key)
+    return (key, _url(bucket, constraint, key))
 
-def upload_file(key, data):
-    bucket = current_app.config['S3_BUCKET_FILES']
+def upload(filename, data):
+    bucket = current_app.config['S3_BUCKET']
+
+    # The key is generated using <current timestamp>.<extension>.
+    # This ensures (or tries to) that no two files share a key.
+    name = int(time.time()*1000) # ms since epoch
+    ext = ''.join(pathlib.Path(filename).suffixes)
+    key = f'{name}{ext}'
+
     return _upload(key, data, bucket)
 
-def delete_file(key):
-    bucket = current_app.config['S3_BUCKET_FILES']
+def delete(key):
+    bucket = current_app.config['S3_BUCKET']
     s3_client.delete_object(Bucket=bucket, Key=key)
-
-def upload_image(key,data):
-    bucket = current_app.config['S3_BUCKET_IMAGES']
-    return _upload(key, data, bucket)

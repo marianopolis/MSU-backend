@@ -9,8 +9,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # For use in file handling. See msu/files.py.
-    S3_BUCKET_IMAGES = os.environ.get('S3_BUCKET_IMAGES')
-    S3_BUCKET_FILES = os.environ.get('S3_BUCKET_FILES')
+    S3_BUCKET = os.environ.get('S3_BUCKET')
 
     # Calendar to access from the calendar tab, and
     # service account that has read access to that calendar.

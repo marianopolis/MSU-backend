@@ -143,7 +143,7 @@ def congress():
             db.session.add(CongressMember(
                 name=request.form['name'],
                 title=request.form['title'],
-                key=secure_filename(file.filename),
+                filename=secure_filename(file.filename),
                 data=file
             ))
             db.session.commit()
@@ -155,7 +155,7 @@ def congress():
             db.session.delete(member)
             db.session.commit()
 
-    congressmembers = CongressMember.query.filter_by(archived=False).all()
+    congressmembers = CongressMember.query.all()
     return render_template('congress.html', congressmembers=congressmembers)
 
 
@@ -171,13 +171,9 @@ def files():
 
             file = request.files['file']
 
-            if File.query.filter_by(key=file.filename).first() is not None:
-                flash('File with name {file.filename} already exists')
-                return redirect(request.url)
-
             if file.filename:
                 db.session.add(File(
-                    key=secure_filename(file.filename),
+                    filename=secure_filename(file.filename),
                     desc=request.form['desc'],
                     data=file,
                 ))
@@ -188,7 +184,7 @@ def files():
             db.session.delete(file)
             db.session.commit()
 
-    files = File.query.all()
+    files = File.query.filter_by(hidden=False).all()
     return render_template('files.html', files=files)
 
 

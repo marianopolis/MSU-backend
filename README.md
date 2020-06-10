@@ -110,8 +110,7 @@ as seen on the
 
 Then, ensure the following environment variables are set:
 
-* `S3_BUCKET_FILES`: Name of bucket for storing general files
-* `S3_BUCKET_IMAGES`: Name of bucket for storing images
+* `S3_BUCKET`: Name of bucket for storing files
 
 ### Facebook events querying
 

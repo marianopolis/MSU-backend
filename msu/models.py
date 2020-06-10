@@ -34,6 +34,7 @@ For a quick intro to using SQLAlchemy with Flask, see
 import secrets
 import hashlib
 import struct
+import time
 
 from sqlalchemy import event
 from sqlalchemy.orm import validates
@@ -45,36 +46,6 @@ from msu import files
 def hash_pwd(pwd, salt):
     """Return a hashed password."""
     return hashlib.pbkdf2_hmac('sha256', pwd, salt, 100_000)
-
-class CongressMember(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, nullable=False)
-    title = db.Column(db.Text, nullable=False)
-    key = db.Column(db.Text, nullable=False, index=True, unique=True)
-    url = db.Column(db.Text, nullable=False)
-    archived = db.Column(db.Boolean, nullable=False, default=False)
-    inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
-                            server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
-                           server_default=func.now(),
-                           onupdate=func.now())
-
-    def __init__(self, name, title, key, data):
-        self.name = name  
-        self.title = title
-        self.key = key
-        self.url = files.upload_image(key, data)
-
-    @property
-    def version(self):
-        data = struct.pack('f', self.updated_at.timestamp())
-        return hashlib.sha1(data).hexdigest()
-
-    @validates('key', 'url')
-    def field_readonly(self, key, val):
-        if getattr(self, key) is not None:
-            raise ValueError(f'{key} is read-only')
-        return val
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -124,19 +95,20 @@ class Link(db.Model):
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    desc = db.Column(db.Text, nullable=False)
     key = db.Column(db.Text, nullable=False, index=True, unique=True)
+    desc = db.Column(db.Text, nullable=False)
     url = db.Column(db.Text, nullable=False)
+    hidden = db.Column(db.Boolean, nullable=False, default=False)
     inserted_at = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
                            server_default=func.now(),
                            onupdate=func.now())
 
-    def __init__(self, key, desc, data):
-        self.key = key
+    def __init__(self, filename, desc, data, *, hidden=False):
         self.desc = desc
-        self.url = files.upload_file(key, data)
+        self.hidden = hidden
+        self.key, self.url = files.upload(filename, data)
 
     @validates('key', 'url')
     def field_readonly(self, key, val):
@@ -146,7 +118,34 @@ class File(db.Model):
 
 @event.listens_for(File, 'before_delete')
 def delete_file(mapper, conn, target):
-    files.delete_file(target.key)
+    files.delete(target.key)
+
+class CongressMember(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+
+    file_id = db.Column(db.Integer,
+                        db.ForeignKey('file.id', ondelete='CASCADE'),
+                        nullable=False)
+    file = db.relationship('File')
+
+    def __init__(self, name, title, filename, data):
+        self.name = name
+        self.title = title
+
+        f = File(filename, title, data, hidden=True)
+        db.session.add(f)
+        db.session.flush()
+        self.file_id = f.id
+
+@event.listens_for(CongressMember, 'after_delete')
+def delete_congressmember(mapper, conn, target):
+    """Delete associated file when deleted."""
+
+    @event.listens_for(db.session, 'after_flush', once=True)
+    def after_flush(sess, context):
+        sess.delete(File.query.get(target.file_id))
 
 class Form(db.Model):
     id = db.Column(db.Integer, primary_key=True)

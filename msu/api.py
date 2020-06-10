@@ -73,17 +73,16 @@ def json_link(link: Link):
         'updated_at': link.updated_at,
     }
 
-def json_congress_member(congressmember: CongressMember):
+def json_congress_member(cm: CongressMember):
     return {
-        'key': congressmember.key,
-        'name': congressmember.name,
-        'title': congressmember.title,
-        'url': congressmember.url,
+        'name': cm.name,
+        'title': cm.title,
+        'url': cm.file.url,
     }
 
 @bp.route('/api/congress', methods=['GET'])
 def get_congress():
-    congressmembers = CongressMember.query.order_by(CongressMember.inserted_at.asc()).all()
+    congressmembers = CongressMember.query.order_by(CongressMember.id.asc()).all()
     return {'data': [json_congress_member(c) for c in congressmembers]}
 
 @bp.route('/api/events', methods=['GET'])
@@ -122,7 +121,8 @@ def create_form():
 
 @bp.route('/api/files', methods=['GET'])
 def get_files():
-    files = File.query.order_by(File.desc.asc()).all()
+    files = File.query.filter_by(hidden=False) \
+                .order_by(File.desc.asc()).all()
     return {'data': [json_file(f) for f in files]}
 
 @bp.route('/api/links', methods=['GET'])
@@ -133,7 +133,7 @@ def get_links():
 # union of files and links
 @bp.route('/api/resources', methods=['GET'])
 def get_resources():
-    files = map(json_file, File.query.all())
+    files = map(json_file, File.query.filter_by(hidden=False).all())
     links = map(json_link, Link.query.all())
     r = list(files) + list(links)
     r.sort(key=(lambda x: x['updated_at']), reverse=True)
