@@ -40,6 +40,10 @@ ALTER USER postgres WITH SUPERUSER;
 \q
 ```
 
+If Postgres already has a user not called `postgres`, type `psql -U postgres`
+to connect to the database as username `postgres` and set password to 
+`postgres`.
+
 The default configuration under `config.py` assumes you have the
 `msu_dev` and `msu_test` databases created, which are used for
 development and testing, respectively. You can create them by doing:
@@ -74,8 +78,16 @@ before running flask:
 
 ### Run the app
 
+On Unix:
 ```
 $ FLASK_APP=msu FLASK_ENV=development flask run --host=0.0.0.0
+```
+
+On Windows:
+```
+> set FLASK_APP=msu
+> set FLASK_ENV=development
+flask run --host=0.0.0.0
 ```
 
 The `0.0.0.0` is to allow devices on your local network to connect
@@ -126,3 +138,11 @@ configured:
 
 See the
 [documentation](https://developers.facebook.com/docs/graph-api/reference/v5.0/group/events)
+
+## Frequent debugging issues
+* If modules or parameters are not recognized, ensure environment 
+is set up correctly by following all the steps on this Readme.
+* If module not recognized despite `pip install <module name>`, 
+ensure that Python environment is set up correctly. If Anaconda
+is installed, `conda install <module name>` might be necessary
+depending on how your Python environment is configured.
