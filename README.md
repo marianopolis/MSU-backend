@@ -113,18 +113,3 @@ as seen on the
 Then, ensure the following environment variables are set:
 
 * `S3_BUCKET`: Name of bucket for storing files
-
-### Facebook events querying
-
-Facebook events are retrieved using facebook's
-[Graph API](https://developers.facebook.com/docs/graph-api).
-
-The routes for querying group and page events require configuring
-access tokens, so the following environment variables must be
-configured:
-
-* `FB_GROUP_ID`: Facebook ID of the group to query
-* `FB_ACCESS_TOKEN`: User access token from a group admin;
-
-See the
-[documentation](https://developers.facebook.com/docs/graph-api/reference/v5.0/group/events)
