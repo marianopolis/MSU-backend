@@ -52,34 +52,36 @@ postgres=# CREATE DATABASE msu_test;
 postgres=# \q
 ```
 
-And then migrating both.
+And then migrating both. The flask environment is configured in
+`.flaskenv`, which is overridden by environment variables.
 
 On Unix:
 
 ```
-$ FLASK_APP=msu FLASK_ENV=development flask db upgrade
-$ FLASK_APP=msu FLASK_ENV=testing flask db upgrade
+$ flask db upgrade
+$ FLASK_ENV=testing flask db upgrade
 ```
 
 On Windows, you'll have to configure the environment variables
 before running flask:
 
 ```
-> set FLASK_APP=msu
-> set FLASK_ENV=development
 > flask db upgrade
 > set FLASK_ENV=testing
 > flask db upgrade
 ```
 
-### Run the app
+### Run the server
 
 ```
-$ FLASK_APP=msu FLASK_ENV=development flask run --host=0.0.0.0
+$ flask run
 ```
 
-The `0.0.0.0` is to allow devices on your local network to connect
-to the server.
+Alternatively, if that doesn't work you can do
+
+```
+$ python -m flask run
+```
 
 ### Run the tests
 
